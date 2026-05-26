@@ -1,0 +1,1162 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OPD Visual Guide · 图像生成重点</title>
+  <meta name="description" content="A compact visual guide to On-Policy Distillation, with a focus on image generation, diffusion, and flow models.">
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['\\(', '\\)']], displayMath: [['$$', '$$']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+  <style>
+    :root {
+      --primary: #cc785c;
+      --primary-active: #a9583e;
+      --ink: #141413;
+      --body: #3d3d3a;
+      --body-strong: #252523;
+      --muted: #6c6a64;
+      --muted-soft: #8e8b82;
+      --hairline: #e6dfd8;
+      --hairline-soft: #ebe6df;
+      --canvas: #faf9f5;
+      --surface-soft: #f5f0e8;
+      --surface-card: #efe9de;
+      --surface-cream-strong: #e8e0d2;
+      --surface-dark: #181715;
+      --surface-dark-elevated: #252320;
+      --surface-dark-soft: #1f1e1b;
+      --on-dark: #faf9f5;
+      --on-dark-soft: #a09d96;
+      --accent-teal: #5db8a6;
+      --accent-amber: #e8a55a;
+      --success: #5db872;
+      --warning: #d4a017;
+      --max: 1180px;
+      --radius: 12px;
+      --radius-sm: 8px;
+      --shadow: 0 1px 3px rgba(20, 20, 19, 0.08);
+      --display: "Cormorant Garamond", "Tiempos Headline", Garamond, "Times New Roman", serif;
+      --sans: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans SC", "Microsoft YaHei", sans-serif;
+      --mono: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--canvas);
+    }
+
+    body {
+      margin: 0;
+      color: var(--body);
+      background:
+        linear-gradient(180deg, rgba(245, 240, 232, 0.72), rgba(250, 249, 245, 0) 420px),
+        var(--canvas);
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.55;
+      letter-spacing: 0;
+      overflow-x: hidden;
+    }
+
+    a {
+      color: var(--primary-active);
+      text-decoration: none;
+    }
+
+    a:hover { text-decoration: underline; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid var(--hairline);
+      background: rgba(250, 249, 245, 0.94);
+      backdrop-filter: blur(14px);
+    }
+
+    .nav {
+      max-width: var(--max);
+      min-height: 64px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--ink);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .mark {
+      width: 20px;
+      height: 20px;
+      color: var(--ink);
+      flex: 0 0 auto;
+    }
+
+    .navlinks {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .navlinks a {
+      color: var(--muted);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    .navlinks a:hover {
+      color: var(--ink);
+      background: var(--surface-card);
+    }
+
+    main { overflow: clip; }
+
+    .section {
+      max-width: var(--max);
+      width: 100%;
+      margin: 0 auto;
+      padding: 74px 24px;
+    }
+
+    .hero {
+      min-height: min(820px, calc(100vh - 64px));
+      display: grid;
+      align-items: center;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 0.86fr);
+      gap: 48px;
+      padding-top: 56px;
+      padding-bottom: 64px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 18px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--primary);
+      display: inline-block;
+    }
+
+    h1, h2, h3 {
+      margin: 0;
+      color: var(--ink);
+      font-family: var(--display);
+      font-weight: 500;
+      letter-spacing: -0.02em;
+    }
+
+    h1 {
+      font-size: clamp(42px, 7vw, 72px);
+      line-height: 0.98;
+      max-width: 850px;
+      overflow-wrap: anywhere;
+    }
+
+    h2 {
+      font-size: clamp(32px, 4.6vw, 52px);
+      line-height: 1.08;
+      margin-bottom: 14px;
+    }
+
+    h3 {
+      font-size: 25px;
+      line-height: 1.15;
+      margin-bottom: 10px;
+    }
+
+    .lead {
+      max-width: 720px;
+      margin: 22px 0 0;
+      color: var(--body-strong);
+      font-size: clamp(18px, 2vw, 22px);
+      line-height: 1.48;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .button {
+      min-height: 40px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-sm);
+      padding: 12px 18px;
+      border: 1px solid var(--hairline);
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .button.primary {
+      border-color: var(--primary);
+      color: #fff;
+      background: var(--primary);
+    }
+
+    .button.primary:hover {
+      background: var(--primary-active);
+      border-color: var(--primary-active);
+      text-decoration: none;
+    }
+
+    .button.secondary {
+      color: var(--ink);
+      background: var(--canvas);
+    }
+
+    .button.secondary:hover {
+      background: var(--surface-card);
+      text-decoration: none;
+    }
+
+    .hero-visual {
+      background: var(--surface-dark);
+      border-radius: 16px;
+      padding: 26px;
+      color: var(--on-dark);
+      box-shadow: var(--shadow);
+      min-width: 0;
+      width: 100%;
+      max-width: 100%;
+      overflow: hidden;
+    }
+
+    .visual-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      color: var(--on-dark-soft);
+      font-size: 13px;
+      margin-bottom: 18px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 4px 10px;
+      background: var(--surface-card);
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .badge.dark {
+      background: var(--surface-dark-elevated);
+      color: var(--on-dark);
+      border: 1px solid rgba(250, 249, 245, 0.08);
+    }
+
+    .pipeline {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .pipe-step {
+      border: 1px solid rgba(250, 249, 245, 0.09);
+      border-radius: 10px;
+      padding: 14px;
+      background: var(--surface-dark-soft);
+    }
+
+    .pipe-step strong {
+      color: var(--on-dark);
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .pipe-step span {
+      color: var(--on-dark-soft);
+      font-size: 14px;
+    }
+
+    .arrow {
+      display: grid;
+      place-items: center;
+      color: var(--accent-amber);
+      font-family: var(--mono);
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .mini-graph {
+      margin-top: 18px;
+      border-radius: 10px;
+      background: #11100f;
+      border: 1px solid rgba(250, 249, 245, 0.08);
+      overflow: hidden;
+    }
+
+    .mini-graph svg {
+      width: 100%;
+      display: block;
+      min-height: 180px;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+
+    .section-head p {
+      max-width: 580px;
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .concept-card,
+    .method-card,
+    .timeline-card {
+      background: var(--surface-card);
+      border-radius: var(--radius);
+      padding: 24px;
+      border: 1px solid rgba(20, 20, 19, 0.03);
+      min-width: 0;
+    }
+
+    .concept-card p,
+    .method-card p,
+    .timeline-card p {
+      margin: 0;
+    }
+
+    .label {
+      display: block;
+      color: var(--primary-active);
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .analogy {
+      margin-top: 14px;
+      color: var(--body);
+      font-size: 15px;
+    }
+
+    .remember {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid var(--hairline);
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    .comparison {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .compare-card {
+      background: var(--canvas);
+      border: 1px solid var(--hairline);
+      border-radius: var(--radius);
+      padding: 22px;
+    }
+
+    .compare-card h3 {
+      font-family: var(--sans);
+      font-size: 18px;
+      letter-spacing: 0;
+      font-weight: 650;
+      margin-bottom: 12px;
+    }
+
+    .compare-card ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--body);
+    }
+
+    .compare-card li + li { margin-top: 8px; }
+
+    .loop-band {
+      background: var(--surface-soft);
+      border-top: 1px solid var(--hairline-soft);
+      border-bottom: 1px solid var(--hairline-soft);
+    }
+
+    .loop-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .loop-step {
+      min-height: 196px;
+      padding: 20px;
+      border-radius: var(--radius);
+      background: var(--canvas);
+      border: 1px solid var(--hairline);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .step-no {
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .formula-panel {
+      background: var(--surface-dark);
+      color: var(--on-dark);
+      border-radius: 16px;
+      padding: 28px;
+    }
+
+    .formula-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .formula-card {
+      background: var(--surface-dark-soft);
+      border: 1px solid rgba(250, 249, 245, 0.08);
+      border-radius: var(--radius);
+      padding: 20px;
+      overflow: auto;
+    }
+
+    .formula-card h3 {
+      color: var(--on-dark);
+      font-family: var(--sans);
+      font-size: 16px;
+      letter-spacing: 0;
+      font-weight: 650;
+    }
+
+    .formula-card p {
+      color: var(--on-dark-soft);
+      margin: 12px 0 0;
+      font-size: 14px;
+    }
+
+    .math {
+      margin: 12px 0 0;
+      color: var(--on-dark);
+      font-family: var(--mono);
+      font-size: 13px;
+      line-height: 1.5;
+      white-space: normal;
+    }
+
+    .image-focus {
+      background: var(--surface-dark);
+      color: var(--on-dark);
+    }
+
+    .image-focus .section {
+      padding-top: 82px;
+      padding-bottom: 82px;
+    }
+
+    .image-focus h2,
+    .image-focus h3 {
+      color: var(--on-dark);
+    }
+
+    .image-focus .section-head p {
+      color: var(--on-dark-soft);
+    }
+
+    .image-focus .method-card {
+      background: var(--surface-dark-elevated);
+      border: 1px solid rgba(250, 249, 245, 0.08);
+      color: var(--on-dark-soft);
+    }
+
+    .image-focus .method-card strong {
+      color: var(--on-dark);
+    }
+
+    .method-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .method-top h3 {
+      font-family: var(--sans);
+      font-size: 18px;
+      font-weight: 650;
+      letter-spacing: 0;
+      margin: 0;
+    }
+
+    .method-card dl {
+      margin: 0;
+      display: grid;
+      gap: 10px;
+    }
+
+    .method-card dt {
+      color: var(--accent-amber);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .method-card dd {
+      margin: 2px 0 0;
+      color: inherit;
+    }
+
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .timeline-card {
+      min-height: 172px;
+      background: var(--canvas);
+      border: 1px solid var(--hairline);
+    }
+
+    .year {
+      color: var(--primary-active);
+      font-size: 13px;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .reading {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    .callout {
+      border-radius: 16px;
+      padding: 30px;
+      color: #fff;
+      background: var(--primary);
+    }
+
+    .callout h2 {
+      color: #fff;
+      margin-bottom: 12px;
+    }
+
+    .callout p {
+      margin: 0;
+      font-size: 17px;
+    }
+
+    .source-list {
+      background: var(--surface-card);
+      border-radius: var(--radius);
+      padding: 24px;
+    }
+
+    .source-list ol {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    .source-list li + li { margin-top: 9px; }
+
+    footer {
+      background: var(--surface-dark);
+      color: var(--on-dark-soft);
+      padding: 32px 24px;
+    }
+
+    .footer-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+      font-size: 14px;
+    }
+
+    .footer-inner a {
+      color: var(--on-dark);
+    }
+
+    .js-filter[hidden] { display: none; }
+
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 20px 0 22px;
+    }
+
+    .filter-button {
+      border: 1px solid var(--hairline);
+      background: var(--canvas);
+      color: var(--muted);
+      border-radius: var(--radius-sm);
+      padding: 9px 12px;
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 650;
+      cursor: pointer;
+    }
+
+    .filter-button.active {
+      background: var(--surface-dark);
+      border-color: var(--surface-dark);
+      color: var(--on-dark);
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .grid-2,
+      .reading {
+        grid-template-columns: 1fr;
+      }
+
+      .grid-3,
+      .comparison,
+      .loop-grid,
+      .formula-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .timeline {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 720px) {
+      .nav {
+        align-items: flex-start;
+        flex-direction: column;
+        padding-top: 14px;
+        padding-bottom: 14px;
+      }
+
+      .navlinks {
+        justify-content: flex-start;
+      }
+
+      .section,
+      .hero {
+        padding-left: 18px;
+        padding-right: 18px;
+        max-width: 100%;
+      }
+
+      .section {
+        padding-top: 54px;
+        padding-bottom: 54px;
+      }
+
+      .hero {
+        min-height: auto;
+        padding-top: 44px;
+        gap: 32px;
+      }
+
+      h1 {
+        font-size: clamp(31px, 9.5vw, 36px);
+        line-height: 1.05;
+        word-break: break-all;
+      }
+
+      h2 {
+        font-size: clamp(28px, 8vw, 34px);
+        word-break: break-all;
+      }
+
+      h1, h2, h3, p, li {
+        overflow-wrap: anywhere;
+      }
+
+      .lead {
+        font-size: 17px;
+      }
+
+      .hero-actions {
+        gap: 10px;
+      }
+
+      .button {
+        padding-left: 15px;
+        padding-right: 15px;
+      }
+
+      .badge {
+        white-space: normal;
+      }
+
+      .section-head {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .grid-3,
+      .comparison,
+      .loop-grid,
+      .formula-grid,
+      .timeline {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-visual,
+      .formula-panel,
+      .callout {
+        padding: 20px;
+        max-width: 100%;
+      }
+
+      .hero-visual {
+        max-width: calc(100vw - 36px);
+      }
+
+      .loop-step {
+        min-height: auto;
+        gap: 24px;
+      }
+
+      .timeline-card {
+        min-height: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <nav class="nav" aria-label="主导航">
+      <a class="brand" href="#top" aria-label="返回顶部">
+        <svg class="mark" viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" d="M11 1h2v8.17l5.78-5.78 1.42 1.42L14.42 10.6H23v2h-8.58l5.78 5.79-1.42 1.41L13 14.02V23h-2v-8.98L5.22 19.8 3.8 18.39l5.78-5.79H1v-2h8.58L3.8 4.81l1.42-1.42L11 9.17V1Z"/>
+        </svg>
+        <span>OPD Visual Guide</span>
+      </a>
+      <div class="navlinks">
+        <a href="#what">是什么</a>
+        <a href="#compare">对比</a>
+        <a href="#loop">循环</a>
+        <a href="#formula">公式</a>
+        <a href="#image">图像生成</a>
+        <a href="#map">进展</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="section hero" id="what">
+      <div>
+        <div class="eyebrow"><span class="dot"></span> 从 0 开始，但抓住主线</div>
+        <h1>OPD：让学生自己走路，<br>老师只在真实踩过的<br>地方纠偏。</h1>
+        <p class="lead">
+          SFT 像背标准答案，RL 像最后看分数。OPD 介于两者之间：学生先按自己的策略生成，教师再沿着学生真实的 rollout 给稠密指导。
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="#image">先看图像生成</a>
+          <a class="button secondary" href="opd-study-guide.html">打开详细文档</a>
+        </div>
+      </div>
+
+      <aside class="hero-visual" aria-label="OPD 流程示意">
+        <div class="visual-title">
+          <span>Core mental model</span>
+          <span class="badge dark">student rollout</span>
+        </div>
+        <div class="pipeline">
+          <div class="pipe-step"><strong>1. 学生先走</strong><span>不是看老师答案，而是按自己的模型采样。</span></div>
+          <div class="arrow">↓</div>
+          <div class="pipe-step"><strong>2. 老师跟着看</strong><span>老师在学生已经到达的每个前缀上判断下一步。</span></div>
+          <div class="arrow">↓</div>
+          <div class="pipe-step"><strong>3. 每一步纠偏</strong><span>token、速度场、均值或分布都可以是信号。</span></div>
+        </div>
+        <div class="mini-graph" aria-hidden="true">
+          <svg viewBox="0 0 520 230" role="img">
+            <rect width="520" height="230" fill="#11100f"/>
+            <path d="M55 178 C126 122 161 190 226 124 S359 78 460 42" fill="none" stroke="#5db8a6" stroke-width="5" stroke-linecap="round"/>
+            <path d="M55 188 C120 156 172 171 226 140 S338 122 460 84" fill="none" stroke="#cc785c" stroke-width="5" stroke-linecap="round" stroke-dasharray="10 10"/>
+            <g fill="#faf9f5" font-family="Inter, sans-serif" font-size="14">
+              <text x="48" y="205">student path</text>
+              <text x="300" y="35">teacher correction</text>
+            </g>
+            <g fill="#e8a55a">
+              <circle cx="226" cy="140" r="6"/>
+              <circle cx="322" cy="108" r="6"/>
+              <circle cx="398" cy="72" r="6"/>
+            </g>
+          </svg>
+        </div>
+      </aside>
+    </section>
+
+    <section class="section" id="compare">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow"><span class="dot"></span> 先把三件事分清</div>
+          <h2>SFT / OPD / RL：<br>老师出现的时刻不同。</h2>
+        </div>
+        <p>零基础最容易混的点是：OPD 不是普通蒸馏换个说法。它真正换掉的是训练时的状态分布。</p>
+      </div>
+      <div class="comparison">
+        <article class="compare-card">
+          <h3>SFT：背答案</h3>
+          <ul>
+            <li>数据：固定标准答案。</li>
+            <li>比喻：抄范文。</li>
+            <li>弱点：不知道学生自己会在哪里走偏。</li>
+          </ul>
+        </article>
+        <article class="compare-card">
+          <h3>OPD：陪练纠偏</h3>
+          <ul>
+            <li>数据：学生自己的 rollout。</li>
+            <li>比喻：老师跟着学生走，边走边指出下一步。</li>
+            <li>强点：训练时看到的状态更像推理时。</li>
+          </ul>
+        </article>
+        <article class="compare-card">
+          <h3>RL：看最后得分</h3>
+          <ul>
+            <li>数据：学生尝试结果。</li>
+            <li>比喻：做完整张卷子才知道对错。</li>
+            <li>弱点：信号稀疏，credit assignment 难。</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="loop-band" id="loop">
+      <div class="section">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow"><span class="dot"></span> 核心循环</div>
+            <h2>OPD 的四步，其实就是“先暴露问题，再精准纠偏”。</h2>
+          </div>
+          <p>只要记住这个循环，再看 MiniLLM、GKD、pi-Flow、DiffusionOPD 都会顺很多。</p>
+        </div>
+        <div class="loop-grid">
+          <article class="loop-step">
+            <div class="step-no">1</div>
+            <div>
+              <h3>学生采样</h3>
+              <p>让学生按当前策略生成，不提前塞教师答案。</p>
+            </div>
+          </article>
+          <article class="loop-step">
+            <div class="step-no">2</div>
+            <div>
+              <h3>暴露路径</h3>
+              <p>LLM 是 token 序列；图像模型是去噪或 flow 轨迹。</p>
+            </div>
+          </article>
+          <article class="loop-step">
+            <div class="step-no">3</div>
+            <div>
+              <h3>教师评价</h3>
+              <p>教师在学生真实前缀或中间状态上给分布、速度或 reward。</p>
+            </div>
+          </article>
+          <article class="loop-step">
+            <div class="step-no">4</div>
+            <div>
+              <h3>学生更新</h3>
+              <p>用 KL、advantage 或 L2 matching，把偏差变成梯度。</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="formula">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow"><span class="dot"></span> 最小公式集</div>
+          <h2>只先记四个公式。别急着背全家桶。</h2>
+        </div>
+        <p>公式不是为了炫技，而是给你一个“看到新论文时知道它在改哪里”的坐标系。</p>
+      </div>
+      <div class="formula-panel">
+        <div class="formula-grid">
+          <article class="formula-card">
+            <h3>1. Reverse KL：别走到老师不认可的地方</h3>
+            <div class="math">$$\mathcal L_{\mathrm{OPD}}=\mathbb E_{y\sim\pi_\theta}\sum_t D_{\mathrm{KL}}\left(\pi_\theta(\cdot|c_t)\|\pi_T(\cdot|c_t)\right)$$</div>
+            <p>比喻：学生脚下这条路，老师说哪里危险，学生就少往哪里踩。适合压制错误模式。</p>
+          </article>
+          <article class="formula-card">
+            <h3>2. Token advantage：老师比学生更支持，就加强</h3>
+            <div class="math">$$A_t=\log\pi_T(y_t|c_t)-\log\pi_\theta(y_t|c_t)$$</div>
+            <p>比喻：同一个动作，老师点头越强，学生下次越敢做。缺点是 sampled-token 方差大。</p>
+          </article>
+          <article class="formula-card">
+            <h3>3. GKD：固定答案和学生路径可以混合</h3>
+            <div class="math">$$\mathcal L=(1-\lambda)\mathbb E_{\mathcal D}D+\lambda\mathbb E_{y\sim\pi_\theta}D$$</div>
+            <p>比喻：先看范文，再上场陪练；\(\lambda\) 越大，越像纯 OPD。</p>
+          </article>
+          <article class="formula-card">
+            <h3>4. Diffusion / Flow：路径从 token 变成轨迹</h3>
+            <div class="math">$$\mathcal L_{\mathrm{traj}}=\mathbb E_{z_t\sim \mathrm{student}}\sum_t \|v_\theta(z_t,t)-v_T(z_t,t)\|_2^2$$</div>
+            <p>比喻：不是只看最终画作，而是在学生每一步上色/去噪时，老师纠正笔触方向。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="image-focus" id="image">
+      <div class="section">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow"><span class="dot"></span> 图像生成重点</div>
+            <h2>图像生成里的 OPD：老师不只看最终图，而是纠正生成轨迹。</h2>
+          </div>
+          <p>LLM 的路径是 token。扩散和 flow 的路径是 latent 从噪声走向图像的过程。OPD 的核心迁移，就是把“学生 token rollout”换成“学生自己的去噪/ODE/SDE 轨迹”。</p>
+        </div>
+        <div class="grid-2">
+          <article class="method-card">
+            <div class="method-top">
+              <h3>DiMO</h3>
+              <span class="badge dark">masked diffusion</span>
+            </div>
+            <dl>
+              <div><dt>解决什么</dt><dd>把 masked diffusion 图像生成压成更少步甚至一步，但避免普通蒸馏分布错位。</dd></div>
+              <div><dt>OPD 信号</dt><dd>学生在自己的 masked rollout 上做分布匹配，配合 generalized Jeffrey divergence。</dd></div>
+              <div><dt>怎么理解</dt><dd><strong>像让学生自己补画缺口，再让老师在这些真实补画位置上改。</strong></dd></div>
+            </dl>
+          </article>
+
+          <article class="method-card">
+            <div class="method-top">
+              <h3>pi-Flow</h3>
+              <span class="badge dark">flow / few-step</span>
+            </div>
+            <dl>
+              <div><dt>解决什么</dt><dd>few-step flow 既要快，又要保持质量和多样性。</dd></div>
+              <div><dt>OPD 信号</dt><dd>学生 policy 先走自己的 ODE 子步，再用教师 velocity field 做 L2 imitation。</dd></div>
+              <div><dt>怎么理解</dt><dd><strong>像学生自己开车过弯，教练在学生实际路线的每个点纠正方向盘角度。</strong></dd></div>
+            </dl>
+          </article>
+
+          <article class="method-card">
+            <div class="method-top">
+              <h3>D-OPSD</h3>
+              <span class="badge dark">self-distill T2I</span>
+            </div>
+            <dl>
+              <div><dt>解决什么</dt><dd>微调 few-step 文生图模型时，保留原本的少步生成能力。</dd></div>
+              <div><dt>OPD 信号</dt><dd>同一模型分成 student 与 teacher：学生只看文本，教师看文本+目标图像，在学生轨迹上匹配预测分布。</dd></div>
+              <div><dt>怎么理解</dt><dd><strong>像学生闭卷画，老师开卷看参考图，但只在学生已经画出的过程上指点。</strong></dd></div>
+            </dl>
+          </article>
+
+          <article class="method-card">
+            <div class="method-top">
+              <h3>DiffusionOPD</h3>
+              <span class="badge dark">multi-task diffusion</span>
+            </div>
+            <dl>
+              <div><dt>解决什么</dt><dd>多任务图像 RL 会互相干扰，串行训练又容易遗忘。</dd></div>
+              <div><dt>OPD 信号</dt><dd>先独立训练任务专家，再把专家能力沿统一学生的 SDE/ODE rollout 蒸馏进一个模型。</dd></div>
+              <div><dt>怎么理解</dt><dd><strong>像先请多个专科老师各教一门，再让总教练在学生自己的训练路线中整合。</strong></dd></div>
+            </dl>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="map">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow"><span class="dot"></span> 最新进展地图</div>
+          <h2>OPD 的演化方向：从语言 token，到图像轨迹。</h2>
+        </div>
+        <p>这不是论文百科，只保留你需要建立方向感的节点。</p>
+      </div>
+
+      <div class="timeline">
+        <article class="timeline-card">
+          <div class="year">2023</div>
+          <h3>MiniLLM / GKD</h3>
+          <p>确立学生 rollout + 教师 token guidance 的基础范式。</p>
+        </article>
+        <article class="timeline-card">
+          <div class="year">2025</div>
+          <h3>DiMO / pi-Flow</h3>
+          <p>OPD 开始进入图像生成：masked diffusion 与 flow 轨迹蒸馏。</p>
+        </article>
+        <article class="timeline-card">
+          <div class="year">2026 Q1</div>
+          <h3>工业 MOPD</h3>
+          <p>MiMo、DeepSeek、GLM 把 OPD 用作多教师/多阶段能力整合。</p>
+        </article>
+        <article class="timeline-card">
+          <div class="year">2026 Q2</div>
+          <h3>D-OPSD</h3>
+          <p>文生图少步模型用自蒸馏微调，学生走自己的生成轨迹。</p>
+        </article>
+        <article class="timeline-card">
+          <div class="year">2026 Q2</div>
+          <h3>DiffusionOPD</h3>
+          <p>把 OPD 统一到 diffusion Markov process，覆盖 SDE 与 ODE。</p>
+        </article>
+        <article class="timeline-card">
+          <div class="year">下一步</div>
+          <h3>读图像线</h3>
+          <p>优先 pi-Flow → D-OPSD → DiffusionOPD，再回看基础 OPD。</p>
+        </article>
+      </div>
+
+      <div class="filter-row" aria-label="资料筛选">
+        <button class="filter-button active" type="button" data-filter="all">全部</button>
+        <button class="filter-button" type="button" data-filter="base">基础</button>
+        <button class="filter-button" type="button" data-filter="image">图像生成</button>
+        <button class="filter-button" type="button" data-filter="system">系统实现</button>
+      </div>
+      <div class="grid-3" aria-live="polite">
+        <article class="concept-card js-filter" data-kind="base">
+          <span class="label">BASE</span>
+          <h3>先读 GKD</h3>
+          <p>最容易把 OPD 写成训练循环，不容易被 policy-gradient 细节卡住。</p>
+          <p class="remember">记住：学生样本比例 \(\lambda\) 是从 KD 走向 OPD 的旋钮。</p>
+        </article>
+        <article class="concept-card js-filter" data-kind="base">
+          <span class="label">BASE</span>
+          <h3>再读 Rethinking</h3>
+          <p>它告诉你不是所有强老师都可教，关键看 teacher-student overlap。</p>
+          <p class="remember">记住：高分教师不等于好教师。</p>
+        </article>
+        <article class="concept-card js-filter" data-kind="image">
+          <span class="label">IMAGE</span>
+          <h3>优先读 pi-Flow</h3>
+          <p>它把“学生自己的轨迹”讲得最像图像生成里的 OPD。</p>
+          <p class="remember">记住：teacher velocity 要在 student trajectory 上匹配。</p>
+        </article>
+        <article class="concept-card js-filter" data-kind="image">
+          <span class="label">IMAGE</span>
+          <h3>再读 DiffusionOPD</h3>
+          <p>它把 OPD 从离散 token 推到连续 diffusion process。</p>
+          <p class="remember">记住：图像 OPD 的 KL 经常会变成 mean / velocity matching。</p>
+        </article>
+        <article class="concept-card js-filter" data-kind="system">
+          <span class="label">SYSTEM</span>
+          <h3>实现看 verl / KDFlow</h3>
+          <p>真正的瓶颈通常是 rollout、teacher forward、logits/hidden state 传输。</p>
+          <p class="remember">记住：算法能跑和规模能跑是两件事。</p>
+        </article>
+        <article class="concept-card js-filter" data-kind="image">
+          <span class="label">IMAGE</span>
+          <h3>最后看 D-OPSD</h3>
+          <p>它把 self-distillation 搬到 few-step T2I 微调上。</p>
+          <p class="remember">记住：teacher 的 privilege 是 text + target image。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="reading">
+        <div class="callout">
+          <h2>你现在只需要带走一句话。</h2>
+          <p>OPD 的本质不是“老师更强”，而是“老师在学生真实会走到的地方教”。图像生成里，这个地方就是学生自己的去噪或 flow 轨迹。</p>
+        </div>
+        <div class="source-list">
+          <h3>下一步阅读</h3>
+          <ol>
+            <li><a href="opd-study-guide.html">OPD 详细学习网页</a></li>
+            <li><a href="OPD学习文档.md">本地 Markdown 原文</a></li>
+            <li><a href="README.md">awesome-on-policy-distillation README</a></li>
+            <li><a href="AwesomeOPD/README.md">thinkwee/AwesomeOPD 本地 README</a></li>
+            <li><a href="https://paperswithcode.co/methods/on-policy-distillation">Papers With Code: On-Policy Distillation</a></li>
+            <li><a href="https://thinkingmachines.ai/blog/on-policy-distillation/">Thinking Machines OPD Blog</a></li>
+            <li><a href="https://arxiv.org/abs/2306.13649">GKD</a> / <a href="https://arxiv.org/abs/2306.08543">MiniLLM</a></li>
+            <li><a href="https://arxiv.org/abs/2604.13016">Rethinking OPD</a> / <a href="https://arxiv.org/abs/2603.25562">Revisiting OPD</a></li>
+            <li><a href="https://arxiv.org/abs/2503.15457">DiMO</a> / <a href="https://arxiv.org/abs/2510.14974">pi-Flow</a></li>
+            <li><a href="https://arxiv.org/abs/2605.05204">D-OPSD</a> / <a href="https://arxiv.org/abs/2605.15055">DiffusionOPD</a></li>
+            <li><a href="https://arxiv.org/abs/2605.08063">Flow-OPD</a> / <a href="https://arxiv.org/abs/2605.13724">AnyFlow</a></li>
+          </ol>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <span>Latest checked: 2026-05-26 · Focus: OPD for image generation</span>
+      <span>Static page · no build step</span>
+    </div>
+  </footer>
+
+  <script>
+    const buttons = Array.from(document.querySelectorAll('.filter-button'));
+    const cards = Array.from(document.querySelectorAll('.js-filter'));
+
+    buttons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const filter = button.dataset.filter;
+        buttons.forEach((item) => item.classList.toggle('active', item === button));
+        cards.forEach((card) => {
+          card.hidden = filter !== 'all' && card.dataset.kind !== filter;
+        });
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,1228 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OPD Study Guide · 详细学习网页</title>
+  <meta name="description" content="OPD detailed visual study guide in Chinese, covering formulas, Start Here papers, image generation OPD, and latest selected progress.">
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['\\(', '\\)']], displayMath: [['$$', '$$']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+  <style>
+    :root {
+      --primary: #cc785c;
+      --primary-active: #a9583e;
+      --ink: #141413;
+      --body: #3d3d3a;
+      --body-strong: #252523;
+      --muted: #6c6a64;
+      --muted-soft: #8e8b82;
+      --hairline: #e6dfd8;
+      --hairline-soft: #ebe6df;
+      --canvas: #faf9f5;
+      --surface-soft: #f5f0e8;
+      --surface-card: #efe9de;
+      --surface-cream-strong: #e8e0d2;
+      --surface-dark: #181715;
+      --surface-dark-elevated: #252320;
+      --surface-dark-soft: #1f1e1b;
+      --on-dark: #faf9f5;
+      --on-dark-soft: #a09d96;
+      --accent-teal: #5db8a6;
+      --accent-amber: #e8a55a;
+      --max: 1180px;
+      --radius: 12px;
+      --radius-sm: 8px;
+      --display: "Cormorant Garamond", "Tiempos Headline", Garamond, "Times New Roman", serif;
+      --sans: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans SC", "Microsoft YaHei", sans-serif;
+      --mono: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--canvas);
+    }
+
+    body {
+      margin: 0;
+      overflow-x: hidden;
+      color: var(--body);
+      background:
+        linear-gradient(180deg, rgba(245, 240, 232, 0.8), rgba(250, 249, 245, 0) 460px),
+        var(--canvas);
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.55;
+      letter-spacing: 0;
+    }
+
+    a {
+      color: var(--primary-active);
+      text-decoration: none;
+    }
+
+    a:hover { text-decoration: underline; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      border-bottom: 1px solid var(--hairline);
+      background: rgba(250, 249, 245, 0.94);
+      backdrop-filter: blur(14px);
+    }
+
+    .nav {
+      max-width: var(--max);
+      min-height: 64px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--ink);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .mark {
+      width: 20px;
+      height: 20px;
+      color: var(--ink);
+      flex: 0 0 auto;
+    }
+
+    .navlinks {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: flex-end;
+    }
+
+    .navlinks a {
+      color: var(--muted);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .navlinks a:hover {
+      color: var(--ink);
+      background: var(--surface-card);
+    }
+
+    .section {
+      max-width: var(--max);
+      width: 100%;
+      margin: 0 auto;
+      padding: 76px 24px;
+    }
+
+    .hero {
+      min-height: 780px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(360px, 0.84fr);
+      gap: 48px;
+      align-items: center;
+      padding-top: 58px;
+      padding-bottom: 70px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 18px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--primary);
+      display: inline-block;
+    }
+
+    h1, h2, h3 {
+      margin: 0;
+      color: var(--ink);
+      font-family: var(--display);
+      font-weight: 500;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      max-width: 800px;
+      font-size: 64px;
+      line-height: 1.03;
+    }
+
+    h2 {
+      font-size: 46px;
+      line-height: 1.1;
+      margin-bottom: 14px;
+    }
+
+    h3 {
+      font-size: 25px;
+      line-height: 1.2;
+      margin-bottom: 10px;
+    }
+
+    .lead {
+      max-width: 720px;
+      margin: 22px 0 0;
+      color: var(--body-strong);
+      font-size: 20px;
+      line-height: 1.5;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .button {
+      min-height: 40px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-sm);
+      padding: 12px 18px;
+      border: 1px solid var(--hairline);
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .button.primary {
+      border-color: var(--primary);
+      color: #fff;
+      background: var(--primary);
+    }
+
+    .button.secondary {
+      color: var(--ink);
+      background: var(--canvas);
+    }
+
+    .button:hover { text-decoration: none; }
+    .button.primary:hover { background: var(--primary-active); border-color: var(--primary-active); }
+    .button.secondary:hover { background: var(--surface-card); }
+
+    .hero-panel,
+    .dark-panel {
+      min-width: 0;
+      width: 100%;
+      border-radius: 16px;
+      background: var(--surface-dark);
+      color: var(--on-dark);
+      padding: 28px;
+      overflow: hidden;
+    }
+
+    .panel-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+      color: var(--on-dark-soft);
+      font-size: 13px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 4px 10px;
+      background: var(--surface-card);
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .badge.dark {
+      background: var(--surface-dark-elevated);
+      color: var(--on-dark);
+      border: 1px solid rgba(250, 249, 245, 0.08);
+    }
+
+    .flow-stack {
+      display: grid;
+      gap: 10px;
+    }
+
+    .flow-step {
+      border: 1px solid rgba(250, 249, 245, 0.09);
+      border-radius: 10px;
+      padding: 14px;
+      background: var(--surface-dark-soft);
+    }
+
+    .flow-step strong {
+      display: block;
+      color: var(--on-dark);
+      margin-bottom: 4px;
+    }
+
+    .flow-step span {
+      color: var(--on-dark-soft);
+      font-size: 14px;
+    }
+
+    .arrow {
+      display: grid;
+      place-items: center;
+      color: var(--accent-amber);
+      font-family: var(--mono);
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 28px;
+      margin-bottom: 28px;
+    }
+
+    .section-head p {
+      max-width: 620px;
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .grid-2,
+    .grid-3,
+    .grid-4 {
+      display: grid;
+      gap: 16px;
+    }
+
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+    .card,
+    .paper-card,
+    .step-card,
+    .method-card {
+      min-width: 0;
+      border-radius: var(--radius);
+      padding: 22px;
+      background: var(--surface-card);
+      border: 1px solid rgba(20, 20, 19, 0.03);
+    }
+
+    .card p,
+    .paper-card p,
+    .step-card p,
+    .method-card p {
+      margin: 0;
+    }
+
+    .card h3,
+    .paper-card h3,
+    .step-card h3,
+    .method-card h3 {
+      font-family: var(--sans);
+      font-size: 18px;
+      font-weight: 750;
+      line-height: 1.35;
+      letter-spacing: 0;
+    }
+
+    .label {
+      display: block;
+      color: var(--primary-active);
+      font-size: 12px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .remember {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid var(--hairline);
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    .compare {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .compare .card {
+      background: var(--canvas);
+      border: 1px solid var(--hairline);
+    }
+
+    .insight-grid {
+      display: grid;
+      grid-template-columns: 0.92fr 1.08fr;
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .insight-card {
+      border-radius: 16px;
+      padding: 26px;
+      background: var(--surface-card);
+      border: 1px solid rgba(20, 20, 19, 0.04);
+    }
+
+    .insight-card.primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .insight-card.primary h2,
+    .insight-card.primary h3 {
+      color: #fff;
+    }
+
+    .insight-card.primary p {
+      color: rgba(255, 255, 255, 0.86);
+    }
+
+    .insight-card p {
+      margin: 0;
+    }
+
+    .insight-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .insight-list div {
+      border-top: 1px solid rgba(20, 20, 19, 0.08);
+      padding-top: 12px;
+    }
+
+    .insight-list strong {
+      display: block;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+
+    .formula-band {
+      background: var(--surface-dark);
+      color: var(--on-dark);
+    }
+
+    .formula-band .section-head p,
+    .formula-band .eyebrow {
+      color: var(--on-dark-soft);
+    }
+
+    .formula-band h2,
+    .formula-band h3 {
+      color: var(--on-dark);
+    }
+
+    .formula-card {
+      min-width: 0;
+      border-radius: var(--radius);
+      padding: 20px;
+      background: var(--surface-dark-soft);
+      border: 1px solid rgba(250, 249, 245, 0.08);
+      overflow: auto;
+    }
+
+    .formula-card p {
+      color: var(--on-dark-soft);
+      margin: 12px 0 0;
+      font-size: 14px;
+    }
+
+    .math {
+      margin-top: 10px;
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--on-dark);
+    }
+
+    .formula-note {
+      margin-top: 10px;
+      color: var(--accent-amber);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .spectrum {
+      margin-top: 18px;
+      border-radius: 16px;
+      padding: 22px;
+      background: var(--surface-dark-elevated);
+      border: 1px solid rgba(250, 249, 245, 0.08);
+    }
+
+    .spectrum h3 {
+      margin-bottom: 14px;
+    }
+
+    .spectrum-track {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .spectrum-step {
+      min-width: 0;
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      background: var(--surface-dark-soft);
+      color: var(--on-dark-soft);
+      font-size: 13px;
+    }
+
+    .spectrum-step strong {
+      display: block;
+      color: var(--on-dark);
+      margin-bottom: 4px;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .step-no {
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 16px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 10px 0 22px;
+    }
+
+    .filter-button {
+      border: 1px solid var(--hairline);
+      background: var(--canvas);
+      color: var(--muted);
+      border-radius: var(--radius-sm);
+      padding: 9px 12px;
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .filter-button.active {
+      background: var(--surface-dark);
+      border-color: var(--surface-dark);
+      color: var(--on-dark);
+    }
+
+    .paper-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .paper-card dl,
+    .method-card dl {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+    }
+
+    .paper-card dt,
+    .method-card dt {
+      color: var(--primary-active);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .paper-card dd,
+    .method-card dd {
+      margin: 2px 0 0;
+      color: var(--body);
+    }
+
+    .paper-meta {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 10px 0 16px;
+    }
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      border-radius: var(--radius);
+      border: 1px solid var(--hairline);
+      background: var(--canvas);
+    }
+
+    .conclusion-table {
+      width: 100%;
+      min-width: 920px;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    .conclusion-table th,
+    .conclusion-table td {
+      border-bottom: 1px solid var(--hairline);
+      padding: 12px 14px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .conclusion-table th {
+      color: var(--ink);
+      background: var(--surface-card);
+      font-weight: 800;
+    }
+
+    .conclusion-table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .image-band {
+      background: var(--surface-soft);
+      border-top: 1px solid var(--hairline-soft);
+      border-bottom: 1px solid var(--hairline-soft);
+    }
+
+    .method-card strong {
+      color: var(--ink);
+    }
+
+    .latest-card {
+      background: var(--canvas);
+      border: 1px solid var(--hairline);
+    }
+
+    .route {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    .callout {
+      border-radius: 16px;
+      padding: 30px;
+      color: #fff;
+      background: var(--primary);
+    }
+
+    .callout h2 {
+      color: #fff;
+      margin-bottom: 12px;
+    }
+
+    .source-list {
+      background: var(--surface-card);
+      border-radius: var(--radius);
+      padding: 24px;
+    }
+
+    .source-list ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    .source-list li + li { margin-top: 8px; }
+
+    details {
+      border-radius: var(--radius);
+      background: var(--canvas);
+      border: 1px solid var(--hairline);
+      padding: 16px 18px;
+    }
+
+    summary {
+      cursor: pointer;
+      color: var(--ink);
+      font-weight: 800;
+    }
+
+    footer {
+      background: var(--surface-dark);
+      color: var(--on-dark-soft);
+      padding: 32px 24px;
+    }
+
+    .footer-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+      font-size: 14px;
+    }
+
+    .footer-inner a { color: var(--on-dark); }
+    .js-filter[hidden] { display: none; }
+
+    @media (max-width: 1050px) {
+      .hero,
+      .grid-2,
+      .insight-grid,
+      .route,
+      .paper-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .grid-3,
+      .grid-4,
+      .compare,
+      .steps,
+      .spectrum-track {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 720px) {
+      .nav {
+        align-items: flex-start;
+        flex-direction: column;
+        padding-top: 14px;
+        padding-bottom: 14px;
+      }
+
+      .navlinks { justify-content: flex-start; }
+
+      .section,
+      .hero {
+        max-width: 100%;
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+
+      .section {
+        padding-top: 54px;
+        padding-bottom: 54px;
+      }
+
+      .hero {
+        min-height: auto;
+        padding-top: 44px;
+        gap: 32px;
+      }
+
+      h1 {
+        font-size: 36px;
+        line-height: 1.08;
+      }
+
+      h2 {
+        font-size: 32px;
+      }
+
+      h1, h2, h3, p, li, dd {
+        overflow-wrap: anywhere;
+      }
+
+      .lead { font-size: 17px; }
+      .hero-panel, .dark-panel, .callout { padding: 20px; }
+
+      .section-head {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .grid-3,
+      .grid-4,
+      .compare,
+      .steps,
+      .spectrum-track {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <nav class="nav" aria-label="主导航">
+      <a class="brand" href="#top" aria-label="返回顶部">
+        <svg class="mark" viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" d="M11 1h2v8.17l5.78-5.78 1.42 1.42L14.42 10.6H23v2h-8.58l5.78 5.79-1.42 1.41L13 14.02V23h-2v-8.98L5.22 19.8 3.8 18.39l5.78-5.79H1v-2h8.58L3.8 4.81l1.42-1.42L11 9.17V1Z"/>
+        </svg>
+        <span>OPD Study Guide</span>
+      </a>
+      <div class="navlinks">
+        <a href="#compare">对比</a>
+        <a href="#synthesis">归纳</a>
+        <a href="#formula">公式</a>
+        <a href="#path">路径</a>
+        <a href="#papers">论文</a>
+        <a href="#image">图像</a>
+        <a href="#latest">进展</a>
+        <a href="#practice">实践</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="section hero">
+      <div>
+        <div class="eyebrow"><span class="dot"></span> 详细版 · 从直觉到论文</div>
+        <h1>OPD 是“学生自己走路，老师沿真实路径纠偏”。</h1>
+        <p class="lead">这页把 `OPD学习文档.md` 变成可视化学习手册：先建立 SFT / KD / OPD / RL 的位置感，再读公式，最后进入 16 篇核心论文和图像生成 OPD。</p>
+        <div class="hero-actions">
+          <a class="button primary" href="#papers">读 16 篇核心论文</a>
+          <a class="button secondary" href="#image">直接看图像生成 OPD</a>
+          <a class="button secondary" href="opd-formula-derivation.html">公式推导子页面</a>
+          <a class="button secondary" href="OPD学习文档.md">Markdown 原文</a>
+        </div>
+      </div>
+      <aside class="hero-panel" aria-label="OPD 总流程">
+        <div class="panel-row">
+          <span>one loop to remember</span>
+          <span class="badge dark">student trajectory</span>
+        </div>
+        <div class="flow-stack">
+          <div class="flow-step"><strong>学生 rollout</strong><span>语言模型生成 token；图像模型走自己的去噪或 flow 轨迹。</span></div>
+          <div class="arrow">↓</div>
+          <div class="flow-step"><strong>教师看学生真实状态</strong><span>教师不只看标准答案，而是在学生已经到达的位置给下一步分布、速度或 reward。</span></div>
+          <div class="arrow">↓</div>
+          <div class="flow-step"><strong>dense guidance 更新</strong><span>信号可以是 reverse KL、top-k KL、advantage、velocity L2、mean matching 或判别器 reward。</span></div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="section" id="compare">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow"><span class="dot"></span> 先分清训练范式</div>
+          <h2>SFT、KD、OPD、RL 的差别，是训练时看到的状态不同。</h2>
+        </div>
+        <p>OPD 的关键不只是“有教师”。关键是教师在学生自己产生的状态上给指导，所以它比 SFT/KD 更贴近推理时分布，又比纯 RL 多了稠密信号。</p>
+      </div>
+      <div class="compare">
+        <article class="card">
+          <span class="label">SFT</span>
+          <h3>背标准答案</h3>
+          <p>数据来自人类或教师固定答案。像学生抄范文，学得快，但不知道自己独立写作时会在哪里跑偏。</p>
+          <p class="remember">公式：\(-\log\pi_\theta(y^\*|x)\)</p>
+        </article>
+        <article class="card">
+          <span class="label">Offline KD</span>
+          <h3>看老师路线</h3>
+          <p>在教师或数据集轨迹上拟合教师分布。比 SFT 更软，但训练状态仍主要来自老师，不是学生自己。</p>
+          <p class="remember">风险：exposure bias 仍在。</p>
+        </article>
+        <article class="card">
+          <span class="label">OPD</span>
+          <h3>陪练纠偏</h3>
+          <p>学生先走自己的 rollout，教师沿这些状态给 token 或轨迹级指导。像教练坐副驾驶，按学生实际路线纠正。</p>
+          <p class="remember">核心：\(y\sim\pi_\theta\)。</p>
+        </article>
+        <article class="card">
+          <span class="label">RL</span>
+          <h3>最后看分数</h3>
+          <p>学生尝试完整输出，再由 reward 或 verifier 打分。信号强但稀疏，credit assignment 更难。</p>
+          <p class="remember">OPD 可视为 dense reward RL。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="synthesis">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow"><span class="dot"></span> 我的统一理解</div>
+          <h2>OPD 不是一个 loss，而是一种训练状态分布的切换。</h2>
+        </div>
+        <p>把它想成开车教学：SFT 让你背路线，KD 让你看老师怎么开，RL 等你开完再评分；OPD 是教练坐在副驾驶，在你真实走到的路口纠正方向。</p>
+      </div>
+      <div class="insight-grid">
+        <article class="insight-card primary">
+          <span class="label" style="color: rgba(255,255,255,0.76)">core thesis</span>
+          <h2>学生先暴露问题，老师再给局部纠偏。</h2>
+          <p>所以 OPD 的价值不在“教师更强”本身，而在教师能否在学生真实访问到的状态上给出可靠、稠密、可优化的信号。</p>
+        </article>
+        <article class="insight-card">
+          <h3>我会用四个问题判断一篇 OPD 论文</h3>
+          <div class="insight-list">
+            <div><strong>谁采样？</strong><span>如果轨迹不是学生自己采样，就更像离线 KD；如果是学生 rollout，才真正触及 exposure bias。</span></div>
+            <div><strong>老师能给什么？</strong><span>白盒给 logits / top-k；黑盒给偏好 reward；自蒸馏给 privileged context；图像模型给 velocity、score 或 mean。</span></div>
+            <div><strong>信号落在哪？</strong><span>token、prefix、trajectory step、latent state、整段答案，决定了 credit assignment 难不难。</span></div>
+            <div><strong>怎么防崩？</strong><span>高熵门控、top-k support、KL 约束、teacher routing、anchor regularization，本质都是在管教师噪声和学生方差。</span></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="formula-band" id="formula">
+      <div class="section">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow"><span class="dot"></span> 核心公式地图</div>
+            <h2>看到新 OPD 论文，先问它改了哪一块。</h2>
+          </div>
+          <p>一篇 OPD 论文通常在四处做文章：sampling policy、teacher access、loss scope、stability mechanism。</p>
+          <p style="margin-top:10px"><a class="button secondary" href="opd-formula-derivation.html">打开公式推导子页面</a></p>
+        </div>
+        <div class="grid-2">
+          <article class="formula-card formula-item">
+            <h3>1. Student rollout</h3>
+            <div class="math">$$y=(y_1,\dots,y_T)\sim\pi_\theta(\cdot|x),\quad c_t=(x,y_{&lt;t})$$</div>
+            <p class="formula-note">在改什么：把训练分布从数据/教师轨迹切到学生轨迹。</p>
+            <p>学生先暴露自己的路径。LLM 是 token prefix；扩散模型是 latent/denoising state。</p>
+          </article>
+          <article class="formula-card formula-item">
+            <h3>2. Reverse KL</h3>
+            <div class="math">$$\mathcal L_{\mathrm{RKL}}=\mathbb E_{y\sim\pi_\theta}\sum_t D_{\mathrm{KL}}(\pi_\theta(\cdot|c_t)\|\pi_T(\cdot|c_t))$$</div>
+            <p class="formula-note">在改什么：压掉学生放到教师低概率区域的错误模式。</p>
+            <p>mode-seeking：惩罚学生把概率放到教师不认可的区域，常用于压错误模式。</p>
+          </article>
+          <article class="formula-card formula-item">
+            <h3>3. Forward KL</h3>
+            <div class="math">$$D_{\mathrm{KL}}(\pi_T\|\pi_\theta)=\sum_v\pi_T(v|c)\log\frac{\pi_T(v|c)}{\pi_\theta(v|c)}$$</div>
+            <p class="formula-note">在改什么：让学生覆盖教师认为可能的多个答案。</p>
+            <p>mode-covering：保留教师认为可能的多种选择，Entropy-Aware OPD 在高熵位置使用它。</p>
+          </article>
+          <article class="formula-card formula-item">
+            <h3>4. Sampled-token advantage</h3>
+            <div class="math">$$A_t=\log\pi_T(y_t|c_t)-\log\pi_\theta(y_t|c_t)$$</div>
+            <p class="formula-note">在改什么：把 full-vocab KL 近似成采样 token 的增减权重。</p>
+            <p>老师比学生更支持这个 token，就增加它；反之降低它。优点省算力，缺点方差高。</p>
+          </article>
+          <article class="formula-card formula-item">
+            <h3>5. GKD 混合目标</h3>
+            <div class="math">$$\mathcal L=(1-\lambda)\mathbb E_{\mathcal D}D+\lambda\mathbb E_{y\sim\pi_\theta}D$$</div>
+            <p class="formula-note">在改什么：用 \(\lambda\) 控制离线稳定性和 on-policy 真实性。</p>
+            <p>\(\lambda\) 是从离线 KD 走向纯 OPD 的旋钮，工程上比纯 policy-gradient 更稳。</p>
+          </article>
+          <article class="formula-card formula-item">
+            <h3>6. ExOPD dense reward</h3>
+            <div class="math">$$r_T(x,y)=\log\frac{\pi_\*(y|x)}{\pi_{\mathrm{ref}}(y|x)},\quad \lambda&gt;1\Rightarrow reward\ extrapolation$$</div>
+            <p class="formula-note">在改什么：把教师分布解释成 dense reward，而不是只当模仿目标。</p>
+            <p>把教师看成 reward 函数。普通 OPD 是模仿，ExOPD 尝试沿教师偏好继续外推。</p>
+          </article>
+          <article class="formula-card formula-item">
+            <h3>7. Black-box reward</h3>
+            <div class="math">$$\max_\theta\ \mathbb E_{y\sim\pi_\theta}D_\phi(x,y)$$</div>
+            <p class="formula-note">在改什么：把不可见的教师 logits 替换成可学习的偏好评分。</p>
+            <p>没有教师 logits 时，用判别器、rubric 或 verbal score 把教师偏好变成 reward。</p>
+          </article>
+          <article class="formula-card formula-item">
+            <h3>8. Diffusion / flow trajectory</h3>
+            <div class="math">$$\mathcal L_{\mathrm{traj}}=\mathbb E_{z_t\sim \mathrm{student}}\sum_t\|v_\theta(z_t,t)-v_T(z_t,t)\|_2^2$$</div>
+            <p class="formula-note">在改什么：把 token 分布匹配搬到连续 latent 轨迹匹配。</p>
+            <p>图像生成里，token KL 常变成速度场、均值、score 或 flow map 的轨迹匹配。</p>
+          </article>
+        </div>
+        <div class="spectrum">
+          <h3>公式谱系：从背答案到轨迹纠偏</h3>
+          <div class="spectrum-track">
+            <div class="spectrum-step"><strong>SFT NLL</strong><span>\(-\log\pi_\theta(y^\*|x)\)：只学标准答案。</span></div>
+            <div class="spectrum-step"><strong>Offline KD</strong><span>\(D(\pi_T,\pi_\theta)\)：学教师分布，但状态多来自教师/数据。</span></div>
+            <div class="spectrum-step"><strong>On-policy KL</strong><span>\(y\sim\pi_\theta\)：学生走到哪，老师纠到哪。</span></div>
+            <div class="spectrum-step"><strong>Advantage / Reward</strong><span>\(\log\pi_T-\log\pi_\theta\)：把教师偏好变成局部奖励。</span></div>
+            <div class="spectrum-step"><strong>Diffusion trajectory</strong><span>\(z_t\sim\mathrm{student}\)：在学生 latent 轨迹上匹配速度、均值或 score。</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="path">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow"><span class="dot"></span> Start Here 8 步路径</div>
+          <h2>按这个顺序读，先有骨架，再填细节。</h2>
+        </div>
+        <p>这是 README 的推荐路径，但每一步都改写成初学者能马上抓住的问题。</p>
+      </div>
+      <div class="steps">
+        <article class="step-card path-step"><div class="step-no">1</div><h3>Survey</h3><p>先建立分类：白盒、黑盒、自蒸馏、上下文、工业多教师。记住：OPD 是训练状态分布的改变。</p></article>
+        <article class="step-card path-step"><div class="step-no">2</div><h3>Foundations</h3><p>MiniLLM、GKD、ExOPD。解决“目标函数怎么写”和“它为什么像 dense RL”。</p></article>
+        <article class="step-card path-step"><div class="step-no">3</div><h3>Practical intuition</h3><p>Thinking Machines 博客。把公式翻译成工程直觉：学生在哪错，老师就在哪教。</p></article>
+        <article class="step-card path-step"><div class="step-no">4</div><h3>Breaks</h3><p>Revisiting、Entropy-Aware、Rethinking。学失败模式：方差、高熵坍缩、教师不可教。</p></article>
+        <article class="step-card path-step"><div class="step-no">5</div><h3>No logits</h3><p>Black-Box OPD。没有教师 logits 时，用判别器或 reward 近似教师偏好。</p></article>
+        <article class="step-card path-step"><div class="step-no">6</div><h3>No teacher</h3><p>OPSD、SDFT。老师可以是同一个模型的 privileged view，而不是外部大模型。</p></article>
+        <article class="step-card path-step"><div class="step-no">7</div><h3>Context</h3><p>OPCD、OEL。把 context、经验、系统提示蒸进模型权重。</p></article>
+        <article class="step-card path-step"><div class="step-no">8</div><h3>Industrial</h3><p>Qwen3、DeepSeek、MiMo、GLM。看 OPD 如何变成多阶段 post-training glue。</p></article>
+      </div>
+    </section>
+
+    <section class="section" id="papers">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow"><span class="dot"></span> 16 篇核心论文卡片</div>
+          <h2>每篇都看结论、公式和我的归纳，而不是只看摘要。</h2>
+        </div>
+        <p>用筛选按钮快速看某一类。PDF 链接指向本地已下载文件；每张卡都回答“公式到底在改什么”。</p>
+      </div>
+      <div class="filter-row" aria-label="论文筛选">
+        <button class="filter-button active" type="button" data-filter="all">全部</button>
+        <button class="filter-button" type="button" data-filter="foundation">基础</button>
+        <button class="filter-button" type="button" data-filter="stability">稳定性</button>
+        <button class="filter-button" type="button" data-filter="access">访问模式</button>
+        <button class="filter-button" type="button" data-filter="context">自蒸馏/上下文</button>
+        <button class="filter-button" type="button" data-filter="industrial">工业</button>
+      </div>
+      <div class="paper-grid">
+        <article class="paper-card paper-item js-filter" data-kind="foundation">
+          <span class="label">01 · Survey</span><h3>OPD Survey</h3>
+          <div class="paper-meta"><a class="badge" href="papers/start-here/01-opd-survey-2604.00626.pdf">PDF</a><a class="badge" href="https://arxiv.org/abs/2604.00626">arXiv</a></div>
+          <dl><div><dt>研究问题</dt><dd>OPD 文献从白盒 logits 扩展到黑盒 reward、自蒸馏、上下文蒸馏和工业多教师，需要统一坐标。</dd></div><div><dt>核心方法</dt><dd>按 teacher access、feedback granularity、loss scope、training distribution 分类。</dd></div><div><dt>关键公式</dt><dd>\(\mathbb E_{y\sim\pi_\theta}\sum_t\mathcal D(\pi_T(\cdot|c_t),\pi_\theta(\cdot|c_t))\)</dd></div><div><dt>公式到底在改什么</dt><dd>把“固定数据上的监督”改成“学生访问状态上的教师距离”。</dd></div><div><dt>论文结论 / 实验发现</dt><dd>OPD 不是某个单一算法，而是一族围绕学生 rollout 设计 teacher signal 的训练范式。</dd></div><div><dt>我的归纳</dt><dd>读新论文先定位四个轴：谁采样、老师给什么、loss 作用在哪、稳定性怎么做。</dd></div><div><dt>局限或风险</dt><dd>Survey 给地图，不给可直接复现的工业 recipe。</dd></div><div><dt>一句话记忆法</dt><dd>这是 OPD 的地图，不是交通工具。</dd></div></dl>
+        </article>
+
+        <article class="paper-card paper-item js-filter" data-kind="foundation">
+          <span class="label">02 · Foundation</span><h3>MiniLLM</h3>
+          <div class="paper-meta"><a class="badge" href="papers/start-here/02-minillm-2306.08543.pdf">PDF</a><a class="badge" href="https://arxiv.org/abs/2306.08543">arXiv</a></div>
+          <dl><div><dt>研究问题</dt><dd>固定轨迹 KD 会让学生只学老师走过的路，推理时一旦自己走偏，训练中没有见过这种前缀。</dd></div><div><dt>核心方法</dt><dd>学生 on-policy 生成，教师在学生前缀上给 reverse-KL / log-prob signal，用 policy-gradient 式目标训练学生。</dd></div><div><dt>关键公式</dt><dd>\(\min_\theta D_{\mathrm{KL}}(q_\theta(y|x)\|p_T(y|x))\)，常用 \(A_t=\log p_T(y_t|c_t)-\log p_\theta(y_t|c_t)\)。</dd></div><div><dt>公式到底在改什么</dt><dd>把 distillation 的分布从 teacher/data trajectory 换成 student trajectory，并用 reverse KL 压低学生错误模式。</dd></div><div><dt>论文结论 / 实验发现</dt><dd>生成式 LLM 蒸馏中，on-policy + reverse KL 比传统离线 KD 更能处理学生自己的生成偏差。</dd></div><div><dt>我的归纳</dt><dd>MiniLLM 是 OPD 的入门原型：它说明“让学生自己犯错”不是噪声，而是训练数据的核心。</dd></div><div><dt>局限或风险</dt><dd>sampled-token estimator 方差高，长序列 credit assignment 不稳。</dd></div><div><dt>一句话记忆法</dt><dd>第一个把“陪练纠偏”讲成 LLM 蒸馏算法的人。</dd></div></dl>
+        </article>
+
+        <article class="paper-card paper-item js-filter" data-kind="foundation">
+          <span class="label">03 · Foundation</span><h3>GKD</h3>
+          <div class="paper-meta"><a class="badge" href="papers/start-here/03-gkd-2306.13649.pdf">PDF</a><a class="badge" href="https://arxiv.org/abs/2306.13649">arXiv</a></div>
+          <dl><div><dt>研究问题</dt><dd>纯 on-policy 有成本和稳定性问题，纯 off-policy 又有 exposure bias，如何统一二者。</dd></div><div><dt>核心方法</dt><dd>用 \(\lambda\) 混合数据轨迹和学生轨迹，token-level divergence 可选 KL、reverse KL、JSD/GJSD。</dd></div><div><dt>关键公式</dt><dd>\(\mathcal L=(1-\lambda)\mathbb E_{(x,y)\sim\mathcal D}D+\lambda\mathbb E_{y\sim\pi_\theta}D\)</dd></div><div><dt>公式到底在改什么</dt><dd>\(\lambda\) 控制训练样本到底多大比例来自学生自己，是从 KD 过渡到 OPD 的旋钮。</dd></div><div><dt>论文结论 / 实验发现</dt><dd>在多类生成任务上，混合学生生成与教师监督能比单纯模仿数据轨迹更稳地提升学生。</dd></div><div><dt>我的归纳</dt><dd>工程上先从 GKD 入门，因为它不要求你一次跳到纯 RL 或复杂 PG，能渐进增加 on-policy 比例。</dd></div><div><dt>局限或风险</dt><dd>仍需要教师 logits，full-vocab divergence 对大词表模型昂贵。</dd></div><div><dt>一句话记忆法</dt><dd>\(\lambda\) 是 KD 到 OPD 的音量旋钮。</dd></div></dl>
+        </article>
+
+        <article class="paper-card paper-item js-filter" data-kind="foundation">
+          <span class="label">04 · Dense RL</span><h3>ExOPD / G-OPD</h3>
+          <div class="paper-meta"><a class="badge" href="papers/start-here/04-exopd-2602.12125.pdf">PDF</a><a class="badge" href="https://arxiv.org/abs/2602.12125">arXiv</a></div>
+          <dl><div><dt>研究问题</dt><dd>OPD 是否只能把学生推向教师，还是能把教师信号解释成 reward 后继续外推。</dd></div><div><dt>核心方法</dt><dd>把 teacher-reference log-ratio 看成 dense reward，并用 \(\lambda\) 控制 imitation、distillation 和 extrapolation。</dd></div><div><dt>关键公式</dt><dd>\(r_T(x,y)=\log\frac{\pi_\*(y|x)}{\pi_{\mathrm{ref}}(y|x)}\)，\(\max_\theta \mathbb E_{\pi_\theta}[\lambda r_T-\beta\log\frac{\pi_\theta}{\pi_{\mathrm{ref}}}]\)</dd></div><div><dt>公式到底在改什么</dt><dd>把 teacher distribution 从“要拟合的目标”改成“可优化的 dense reward”。</dd></div><div><dt>论文结论 / 实验发现</dt><dd>OPD 可以放进 KL-constrained RL 视角；\(\lambda&gt;1\) 的 ExOPD 尝试利用教师偏好超越教师。</dd></div><div><dt>我的归纳</dt><dd>这篇最适合理解 OPD 与 RL 的关系：OPD 是 dense reward RL 的一个低方差特例。</dd></div><div><dt>局限或风险</dt><dd>外推会放大教师偏差和校准错误，不能把 \(\lambda&gt;1\) 当免费午餐。</dd></div><div><dt>一句话记忆法</dt><dd>模仿老师，也可以顺着老师偏好再走一步。</dd></div></dl>
+        </article>
+
+        <article class="paper-card paper-item js-filter" data-kind="stability">
+          <span class="label">05 · Stability</span><h3>Revisiting OPD</h3>
+          <div class="paper-meta"><a class="badge" href="papers/start-here/05-revisiting-opd-2603.25562.pdf">PDF</a><a class="badge" href="https://arxiv.org/abs/2603.25562">arXiv</a></div>
+          <dl><div><dt>研究问题</dt><dd>为什么 sampled-token OPD 在长序列、多任务和特殊 token 上容易不稳。</dd></div><div><dt>核心方法</dt><dd>从单个采样 token 的 advantage，转向教师 top-K support matching，并处理特殊 token 与局部归一化。</dd></div><div><dt>关键公式</dt><dd>\(D_{\mathrm{KL}}(\tilde\pi_\theta^S(\cdot|c_t)\|\tilde q_T^S(\cdot|c_t))\)，其中 \(S\) 是教师 top-K 支持集。</dd></div><div><dt>公式到底在改什么</dt><dd>把“一次采样的 token 反馈”改成“教师候选集合的分布反馈”。</dd></div><div><dt>论文结论 / 实验发现</dt><dd>OPD 的不稳定很大一部分来自高方差估计和不合适的 token scope，top-K 分布匹配更稳。</dd></div><div><dt>我的归纳</dt><dd>这篇告诉你：OPD 不是只要 on-policy 就赢，teacher signal 的局部形状也很关键。</dd></div><div><dt>局限或风险</dt><dd>需要 logits/top-K；如果教师在学生偏离前缀上本身不可靠，support matching 也会继承噪声。</dd></div><div><dt>一句话记忆法</dt><dd>别只听老师对一个词的态度，要看老师的候选名单。</dd></div></dl>
+        </article>
+
+        <article class="paper-card paper-item js-filter" data-kind="stability">
+          <span class="label">06 · Stability</span><h3>Entropy-Aware OPD</h3>
+          <div class="paper-meta"><a class="badge" href="papers/start-here/06-entropy-aware-opd-2603.07079.pdf">PDF</a><a class="badge" href="https://arxiv.org/abs/2603.07079">arXiv</a></div>
+          <dl><div><dt>研究问题</dt><dd>reverse KL 的 mode-seeking 会不会把教师高熵状态下的多样性压成单一路径。</dd></div><div><dt>核心方法</dt><dd>按教师 entropy 做门控：低熵位置用 reverse KL，高熵位置补 forward KL 或覆盖项。</dd></div><div><dt>关键公式</dt><dd>\(\mathcal L_{\mathrm{EOPD}}=\mathcal L_{\mathrm{RKL}}+\mathbf1[H(\pi_T)&gt;\tau]\mathcal L_{\mathrm{FKL}}\)</dd></div><div><dt>公式到底在改什么</dt><dd>让 loss 的方向随教师不确定性变化：确定时收敛，不确定时保多样。</dd></div><div><dt>论文结论 / 实验发现</dt><dd>只用 reverse KL 容易在高熵 token 上过度坍缩；entropy-aware 门控能改善多样性和稳定性。</dd></div><div><dt>我的归纳</dt><dd>这篇是 OPD 里的“老师也会犹豫”原则：老师犹豫时，学生不该被强迫只学一个答案。</dd></div><div><dt>局限或风险</dt><dd>高熵可能代表合理多样性，也可能代表教师混乱；阈值和任务相关。</dd></div><div><dt>一句话记忆法</dt><dd>老师犹豫时，别逼学生只选一个答案。</dd></div></dl>
+        </article>
+
+        <article class="paper-card paper-item js-filter" data-kind="stability">
+          <span class="label">07 · Diagnosis</span><h3>Rethinking OPD</h3>
+          <div class="paper-meta"><a class="badge" href="papers/start-here/07-rethinking-opd-2604.13016.pdf">PDF</a><a class="badge" href="https://arxiv.org/abs/2604.13016">arXiv</a></div>
+          <dl><div><dt>研究问题</dt><dd>为什么更强教师不一定更适合弱学生，OPD 什么时候会失效。</dd></div><div><dt>核心方法</dt><dd>监控 teacher/student top-k overlap、entropy gap、teacher novelty，诊断“能不能教”和“学生听不听得懂”。</dd></div><div><dt>关键公式</dt><dd>\(M_{\mathrm{overlap}}=\mathbb E_t\frac{|S_T(c_t)\cap S_S(c_t)|}{k}\)</dd></div><div><dt>公式到底在改什么</dt><dd>它不直接改 loss，而是给 OPD 增加可观测的匹配度指标。</dd></div><div><dt>论文结论 / 实验发现</dt><dd>OPD 的收益依赖教师新颖性和学生可吸收性的平衡，强教师与弱学生差距过大反而可能降低学习效率。</dd></div><div><dt>我的归纳</dt><dd>选教师不是选榜单第一，而是选“学生当前阶段能理解、又能提供增量”的教师。</dd></div><div><dt>局限或风险</dt><dd>诊断需要 logits/top-k；不同任务的合理阈值不通用。</dd></div><div><dt>一句话记忆法</dt><dd>好老师不是最强，而是学生听得懂且有新东西。</dd></div></dl>
+        </article>
+
+        <article class="paper-card paper-item js-filter" data-kind="access">
+          <span class="label">08 · Black-box</span><h3>Black-Box OPD / GAD</h3>
+          <div class="paper-meta"><a class="badge" href="papers/start-here/08-black-box-opd-2511.10643.pdf">PDF</a><a class="badge" href="https://arxiv.org/abs/2511.10643">arXiv</a></div>
+          <dl><div><dt>研究问题</dt><dd>教师只有 API 输出，没有 logits，传统 white-box OPD 无法直接计算 token KL。</dd></div><div><dt>核心方法</dt><dd>训练判别器区分教师与学生输出，或把教师偏好转成 reward，再对学生做 on-policy 更新。</dd></div><div><dt>关键公式</dt><dd>\(\max_\theta\mathbb E_{y\sim\pi_\theta}D_\phi(x,y)-\beta D_{\mathrm{KL}}(\pi_\theta\|\pi_{\mathrm{ref}})\)</dd></div><div><dt>公式到底在改什么</dt><dd>把不可见的 token-level teacher distribution 换成可学习的 sequence-level reward。</dd></div><div><dt>论文结论 / 实验发现</dt><dd>即使拿不到 logits，也能保留“学生 rollout + 教师偏好纠偏”的 OPD 精神，但更接近 RL 系统。</dd></div><div><dt>我的归纳</dt><dd>黑盒 OPD 的核心瓶颈从“蒸馏 loss”转移到“reward/判别器是否可信”。</dd></div><div><dt>局限或风险</dt><dd>判别器可能 reward hacking，且信号通常不如 white-box token logits 稠密。</dd></div><div><dt>一句话记忆法</dt><dd>拿不到老师的概率表，就训练一个裁判学老师品味。</dd></div></dl>
+        </article>
+
+        <article class="paper-card paper-item js-filter" data-kind="context">
+          <span class="label">09 · Self</span><h3>OPSD</h3>
+          <div class="paper-meta"><a class="badge" href="papers/start-here/09-opsd-2601.18734.pdf">PDF</a><a class="badge" href="https://arxiv.org/abs/2601.18734">arXiv</a></div>
+          <dl><div><dt>研究问题</dt><dd>没有外部强教师时，模型能否从自己的 privileged view 中获得 token-level 教师信号。</dd></div><div><dt>核心方法</dt><dd>学生只看问题并 rollout；教师是同一模型但额外看到参考答案、推理轨迹或 privileged context。</dd></div><div><dt>关键公式</dt><dd>\(D(p_T(\cdot|x,y^\*,\hat y_{&lt;t})\|p_S(\cdot|x,\hat y_{&lt;t}))\)</dd></div><div><dt>公式到底在改什么</dt><dd>教师不再是外部大模型，而是“开卷视角”的同模型。</dd></div><div><dt>论文结论 / 实验发现</dt><dd>privileged context 可以把稀疏正确性信号转成学生 rollout 上的 dense 自蒸馏信号。</dd></div><div><dt>我的归纳</dt><dd>OPSD 的启发很适合图像方向：text-only 学生可以从 text+image 教师视角学习中间轨迹。</dd></div><div><dt>局限或风险</dt><dd>privileged context 质量决定上限，可能压制学生探索或复制错误解释。</dd></div><div><dt>一句话记忆法</dt><dd>同一个学生，开卷版教闭卷版。</dd></div></dl>
+        </article>
+
+        <article class="paper-card paper-item js-filter" data-kind="context">
+          <span class="label">10 · Self</span><h3>SDFT</h3>
+          <div class="paper-meta"><a class="badge" href="papers/start-here/10-sdft-2601.19897.pdf">PDF</a><a class="badge" href="https://arxiv.org/abs/2601.19897">arXiv</a></div>
+          <dl><div><dt>研究问题</dt><dd>持续学习中，如何把 in-context demonstration 的能力内化到权重，同时减少遗忘。</dd></div><div><dt>核心方法</dt><dd>同模型 demonstration-conditioned teacher 或 EMA teacher 监督 no-demo student 的 rollout。</dd></div><div><dt>关键公式</dt><dd>\(\mathbb E_{y\sim\pi_\theta(\cdot|x)}\log\frac{\pi_\theta(y|x)}{\pi_T(y|x,c)}\)</dd></div><div><dt>公式到底在改什么</dt><dd>把“每次推理都带示例”改成“训练时用示例教师，推理时学生不带示例”。</dd></div><div><dt>论文结论 / 实验发现</dt><dd>自蒸馏能把 demonstration 的行为模式写入参数，并在 continual tuning 中缓解旧能力掉落。</dd></div><div><dt>我的归纳</dt><dd>SDFT 是“把上下文能力压进权重”的一条实用路线，和 OPCD/OEL 是同一思想族。</dd></div><div><dt>局限或风险</dt><dd>前提是模型已经能利用 demonstration；否则教师视角本身不强。</dd></div><div><dt>一句话记忆法</dt><dd>先让模型带小抄做，再让它不带小抄也会做。</dd></div></dl>
+        </article>
+
+        <article class="paper-card paper-item js-filter" data-kind="context">
+          <span class="label">11 · Context</span><h3>OPCD</h3>
+          <div class="paper-meta"><a class="badge" href="papers/start-here/11-opcd-2602.12275.pdf">PDF</a><a class="badge" href="https://arxiv.org/abs/2602.12275">arXiv</a></div>
+          <dl><div><dt>研究问题</dt><dd>能否把系统提示、知识库、长上下文或工具经验蒸进模型权重，减少推理时上下文依赖。</dd></div><div><dt>核心方法</dt><dd>学生在无 context 条件下 rollout，教师带 context 在同一学生前缀上提供分布指导。</dd></div><div><dt>关键公式</dt><dd>\(\mathbb E_{y\sim\pi_\theta(\cdot|x)}\sum_tD_{\mathrm{KL}}(\pi_\theta(\cdot|x,y_{&lt;t})\|\pi_T(\cdot|x,c,y_{&lt;t}))\)</dd></div><div><dt>公式到底在改什么</dt><dd>把 context 从推理输入变成训练教师条件，最终让学生无 context 也接近有 context 行为。</dd></div><div><dt>论文结论 / 实验发现</dt><dd>context distillation 可以把外部上下文能力压缩到模型内部，降低部署时 prompt/context 成本。</dd></div><div><dt>我的归纳</dt><dd>OPCD 是 OPD 的一个很重要变体：老师强不是因为参数更大，而是因为“看得更多”。</dd></div><div><dt>局限或风险</dt><dd>会固化错误或过时 context；隐私、更新和遗忘管理很关键。</dd></div><div><dt>一句话记忆法</dt><dd>把提示词从输入栏搬进模型脑子。</dd></div></dl>
+        </article>
+
+        <article class="paper-card paper-item js-filter" data-kind="context">
+          <span class="label">12 · Experience</span><h3>OEL</h3>
+          <div class="paper-meta"><a class="badge" href="papers/start-here/12-oel-2603.16856.pdf">PDF</a><a class="badge" href="https://arxiv.org/abs/2603.16856">arXiv</a></div>
+          <dl><div><dt>研究问题</dt><dd>部署后没有服务端环境或显式 reward，如何从用户端交互中持续学习。</dd></div><div><dt>核心方法</dt><dd>从交互轨迹抽取 experience，逐步累积，再把 experience 作为教师 context 做 OPCD consolidation。</dd></div><div><dt>关键公式</dt><dd>\(e_i=[e_{i-1};e'_i]\)，再用 \(D(\pi_S(\cdot|x,y_{&lt;t})\|\pi_T(\cdot|x,e_i,y_{&lt;t}))\) 蒸馏。</dd></div><div><dt>公式到底在改什么</dt><dd>把在线经验从“只存在日志里”改成“可反复提供教师视角的 context”。</dd></div><div><dt>论文结论 / 实验发现</dt><dd>OPD 可以形成部署闭环：交互产生经验，经验增强教师，教师再把能力蒸回学生。</dd></div><div><dt>我的归纳</dt><dd>OEL 的价值在流程设计，不只在 loss；它把 OPD 从训练算法推向产品持续学习机制。</dd></div><div><dt>局限或风险</dt><dd>experience extraction、隐私、污染和错误反馈积累是主要风险。</dd></div><div><dt>一句话记忆法</dt><dd>把实战笔记整理成老师，再蒸回学生。</dd></div></dl>
+        </article>
+
+        <article class="paper-card paper-item js-filter" data-kind="industrial">
+          <span class="label">13 · Industrial</span><h3>Qwen3</h3>
+          <div class="paper-meta"><a class="badge" href="papers/start-here/13-qwen3-2505.09388.pdf">PDF</a><a class="badge" href="https://arxiv.org/abs/2505.09388">arXiv</a></div>
+          <dl><div><dt>研究问题</dt><dd>如何把强模型的推理、指令和多语能力迁移到更小、更便宜的模型。</dd></div><div><dt>核心方法</dt><dd>强到弱蒸馏，结合 off-policy synthetic data、on-policy student rollout 和教师分布监督。</dd></div><div><dt>关键公式</dt><dd>\(\mathbb E_{y\sim\pi_\theta}\sum_tD(\pi_T(\cdot|c_t),\pi_\theta(\cdot|c_t))\)</dd></div><div><dt>公式到底在改什么</dt><dd>把大模型能力迁移从单次数据生成，升级为学生状态上的迭代纠偏。</dd></div><div><dt>论文结论 / 实验发现</dt><dd>工业大模型训练已经把 OPD 作为强到弱迁移和 post-training 的重要组件。</dd></div><div><dt>我的归纳</dt><dd>Qwen3 的意义是“OPD 进入主流配方”，但公开材料通常不会给完整超参和数据混合。</dd></div><div><dt>局限或风险</dt><dd>报告级资料不公开完整 recipe，复现需要谨慎。</dd></div><div><dt>一句话记忆法</dt><dd>小模型不是直接 RL，而是先向强老师走自己的路。</dd></div></dl>
+        </article>
+
+        <article class="paper-card paper-item js-filter" data-kind="industrial">
+          <span class="label">14 · Industrial</span><h3>DeepSeek-V4</h3>
+          <div class="paper-meta"><a class="badge" href="papers/start-here/14-deepseek-v4.pdf">PDF</a><a class="badge" href="https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro/blob/main/DeepSeek_V4.pdf">Report</a></div>
+          <dl><div><dt>研究问题</dt><dd>多个领域专家或阶段模型如何合并成一个统一学生，而不是部署一堆专科模型。</dd></div><div><dt>核心方法</dt><dd>多教师 OPD，按领域或任务选择专家教师，使用 full-vocabulary logit distillation / routing / cache 优化。</dd></div><div><dt>关键公式</dt><dd>\(\mathcal L=\sum_i w_i(x,c_t)D_{\mathrm{KL}}(\pi_\theta(\cdot|c_t)\|\pi_{E_i}(\cdot|c_t))\)</dd></div><div><dt>公式到底在改什么</dt><dd>从单教师 OPD 变成按任务混合多个教师分布。</dd></div><div><dt>论文结论 / 实验发现</dt><dd>OPD 可以作为多专家能力整合工具，把不同阶段或领域的能力压到一个服务模型里。</dd></div><div><dt>我的归纳</dt><dd>工业 OPD 的难点往往不在 KL 公式，而在 teacher routing、吞吐、缓存和专家冲突。</dd></div><div><dt>局限或风险</dt><dd>系统复杂且教师推理成本高；公开报告通常省略关键工程细节。</dd></div><div><dt>一句话记忆法</dt><dd>把多个专科老师压成一个全科医生。</dd></div></dl>
+        </article>
+
+        <article class="paper-card paper-item js-filter" data-kind="industrial">
+          <span class="label">15 · Industrial</span><h3>MiMo-V2-Flash</h3>
+          <div class="paper-meta"><a class="badge" href="papers/start-here/15-mimo-v2-flash-2601.02780.pdf">PDF</a><a class="badge" href="https://arxiv.org/abs/2601.02780">arXiv</a></div>
+          <dl><div><dt>研究问题</dt><dd>如何把多领域教师的 token-level 指导与 outcome reward 结合，既学过程又看结果。</dd></div><div><dt>核心方法</dt><dd>MOPD：domain teacher 给 sampled-token advantage，可叠加 ORM / verifier advantage 和重要性截断。</dd></div><div><dt>关键公式</dt><dd>\(\hat A_t=\log\frac{\pi_{\mathrm{domain}}(y_t|c_t)}{\pi_\theta(y_t|c_t)}+\alpha\hat A_{\mathrm{ORM}}\)</dd></div><div><dt>公式到底在改什么</dt><dd>把 token-level teacher guidance 与 sequence-level outcome reward 加到同一个 advantage 里。</dd></div><div><dt>论文结论 / 实验发现</dt><dd>多教师 OPD 与 outcome reward 可以互补：老师逐步纠偏，裁判负责最终质量。</dd></div><div><dt>我的归纳</dt><dd>这很接近我理解的“工业后训练终局”：dense teacher signal 管路径，reward 管目标。</dd></div><div><dt>局限或风险</dt><dd>教师选择、reward 权重、重要性截断和 domain routing 都会影响稳定性。</dd></div><div><dt>一句话记忆法</dt><dd>老师逐 token 指路，裁判看最终结果。</dd></div></dl>
+        </article>
+
+        <article class="paper-card paper-item js-filter" data-kind="industrial">
+          <span class="label">16 · Industrial</span><h3>GLM-5</h3>
+          <div class="paper-meta"><a class="badge" href="papers/start-here/16-glm-5-2602.15763.pdf">PDF</a><a class="badge" href="https://arxiv.org/abs/2602.15763">arXiv</a></div>
+          <dl><div><dt>研究问题</dt><dd>多阶段 post-training 后，最终模型如何保留早期阶段学到的基础、推理或风格能力。</dd></div><div><dt>核心方法</dt><dd>On-Policy Cross-Stage Distillation：用早期 checkpoint 或阶段模型作为教师，在当前学生 rollout 上蒸馏。</dd></div><div><dt>关键公式</dt><dd>\(\sum_s\alpha_s\mathbb E_{y\sim\pi_\theta}\sum_tD(\pi_\theta(\cdot|c_t),\pi_{\mathrm{stage}\ s}(\cdot|c_t))\)</dd></div><div><dt>公式到底在改什么</dt><dd>把 teacher 从外部模型换成训练历史中的阶段模型。</dd></div><div><dt>论文结论 / 实验发现</dt><dd>OPD 可用于训练生命周期管理，缓解后续对齐、RL 或领域训练带来的遗忘。</dd></div><div><dt>我的归纳</dt><dd>这是“模型向过去的自己学习”：不是为了压缩，而是为了不丢掉曾经学会的能力。</dd></div><div><dt>局限或风险</dt><dd>阶段教师可能互相冲突，\(\alpha_s\) 调度和数据选择不透明。</dd></div><div><dt>一句话记忆法</dt><dd>让最终模型复习自己曾经学会的东西。</dd></div></dl>
+        </article>
+      </div>
+
+      <div class="section-head" style="margin-top: 42px">
+        <div>
+          <div class="eyebrow"><span class="dot"></span> 论文结论总表</div>
+          <h2>把 16 篇压缩成一句实践判断。</h2>
+        </div>
+        <p>这张表是我对论文结论的二次归纳：不是逐字摘录，而是面向学习和实现的判断。</p>
+      </div>
+      <div class="table-wrap">
+        <table class="conclusion-table">
+          <thead><tr><th>论文</th><th>方法类型</th><th>核心公式信号</th><th>论文主要结论</th><th>实践启发</th></tr></thead>
+          <tbody>
+            <tr><td>Survey</td><td>Taxonomy</td><td>Student-state divergence</td><td>OPD 是一族训练范式。</td><td>先分 teacher access 和 signal granularity。</td></tr>
+            <tr><td>MiniLLM</td><td>White-box OPD</td><td>Reverse KL / sampled advantage</td><td>学生 rollout 能缓解生成偏差。</td><td>先理解它，再看所有变体。</td></tr>
+            <tr><td>GKD</td><td>Hybrid KD</td><td>\((1-\lambda)D_{\mathcal D}+\lambda D_{\pi_\theta}\)</td><td>混合 off/on-policy 更容易工程落地。</td><td>用 \(\lambda\) 逐步提高 on-policy 比例。</td></tr>
+            <tr><td>ExOPD</td><td>Dense RL</td><td>Teacher-reference log-ratio reward</td><td>OPD 可解释为 KL-constrained RL。</td><td>把教师看成 reward，但别盲目外推。</td></tr>
+            <tr><td>Revisiting</td><td>Stability</td><td>Top-K support KL</td><td>只看采样 token 不稳。</td><td>优先考虑 top-k 或局部分布信号。</td></tr>
+            <tr><td>Entropy-Aware</td><td>Stability</td><td>Entropy-gated FKL</td><td>高熵状态需要保多样性。</td><td>不要在教师犹豫时强行 mode-seeking。</td></tr>
+            <tr><td>Rethinking</td><td>Diagnosis</td><td>Top-k overlap / entropy gap</td><td>教师越强不一定越好。</td><td>选择学生能吸收的教师。</td></tr>
+            <tr><td>Black-Box OPD</td><td>API-only</td><td>Discriminator / reward</td><td>无 logits 也能做 on-policy 教师纠偏。</td><td>重点转为 reward 可靠性。</td></tr>
+            <tr><td>OPSD</td><td>Self-distillation</td><td>Privileged-view KL</td><td>同模型开卷视角可以教闭卷学生。</td><td>适合无外部教师场景。</td></tr>
+            <tr><td>SDFT</td><td>Self-distillation</td><td>Demo-conditioned teacher KL</td><td>可把 demonstration 能力内化到权重。</td><td>持续学习时用于减少遗忘。</td></tr>
+            <tr><td>OPCD</td><td>Context distillation</td><td>Context teacher vs no-context student</td><td>上下文能力可以蒸进模型。</td><td>把提示词、知识或工具经验内化。</td></tr>
+            <tr><td>OEL</td><td>Experience loop</td><td>Experience-context teacher</td><td>部署交互可形成学习闭环。</td><td>日志质量和隐私是关键。</td></tr>
+            <tr><td>Qwen3</td><td>Industrial strong-to-weak</td><td>Teacher distribution on student states</td><td>OPD 已进入主流工业 post-training。</td><td>公开报告只能学框架，别照搬超参。</td></tr>
+            <tr><td>DeepSeek-V4</td><td>Multi-teacher</td><td>Weighted expert KL</td><td>OPD 能整合多个专家模型。</td><td>难点是 teacher routing 和系统吞吐。</td></tr>
+            <tr><td>MiMo-V2-Flash</td><td>Teacher + reward</td><td>Token advantage + ORM advantage</td><td>过程教师和结果奖励可以互补。</td><td>路径用 OPD 管，目标用 reward 管。</td></tr>
+            <tr><td>GLM-5</td><td>Cross-stage</td><td>Stage-teacher KL</td><td>OPD 能缓解多阶段训练遗忘。</td><td>把历史 checkpoint 当老师。</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="image-band" id="image">
+      <div class="section">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow"><span class="dot"></span> 图像生成 / 扩散 OPD 专区</div>
+            <h2>把 token rollout 换成 denoising / flow / latent trajectory。</h2>
+          </div>
+          <p>图像 OPD 的核心转译：学生不是逐 token 生成，而是在 latent 空间里从噪声走向图像。教师信号也从 token logits 变成速度场、均值、score、flow map 或 reward。</p>
+        </div>
+        <div class="insight-grid" style="margin-bottom:18px">
+          <article class="insight-card">
+            <h3>LLM 到图像生成的对应关系</h3>
+            <div class="insight-list">
+              <div><strong>token prefix</strong><span>对应 diffusion / flow 的 \(z_t\)、denoising state、ODE/SDE state 或 latent update history。</span></div>
+              <div><strong>teacher logits</strong><span>对应 teacher velocity field、score、Gaussian mean、flow map、reward 或 preference model。</span></div>
+              <div><strong>KL on token</strong><span>对应 per-step KL、mean matching、velocity L2、trajectory consistency 或 reward-regularized update。</span></div>
+            </div>
+          </article>
+          <article class="insight-card primary">
+            <span class="label" style="color: rgba(255,255,255,0.76)">my view</span>
+            <h2>图像 OPD 的关键不是“老师给好图打分”。</h2>
+            <p>关键是老师在学生自己的中间轨迹上持续纠偏：学生在哪个 latent state 走歪，教师就在那个 state 给速度、均值、score 或 reward 方向。</p>
+          </article>
+        </div>
+        <div class="grid-3">
+          <article class="method-card image-method"><span class="label">DiMO · 2025</span><h3>Masked diffusion one-step</h3><dl><div><dt>问题</dt><dd>多步 masked diffusion 很慢，一步化又缺中间监督。</dd></div><div><dt>信号</dt><dd>token-level distribution matching + auxiliary model + generalized Jeffrey divergence。</dd></div><div><dt>公式类比</dt><dd>\(D_{\mathrm{GJ}}(p_T(\cdot|z_t),p_\theta(\cdot|z_t))\)：离散图像 token 上的 OPD。</dd></div><div><dt>我的判断</dt><dd>DiMO 说明图像 OPD 不只属于连续 diffusion，离散 masked token 也能做学生轨迹纠偏。</dd></div></dl></article>
+          <article class="method-card image-method"><span class="label">pi-Flow · 2025/2026</span><h3>沿学生 ODE 轨迹匹配速度</h3><dl><div><dt>问题</dt><dd>few-step flow 常有质量-多样性 trade-off。</dd></div><div><dt>信号</dt><dd>学生 policy 产生未来子步速度，教师 velocity field 在学生轨迹上用 L2 匹配。</dd></div><div><dt>公式类比</dt><dd>\(\mathbb E_{z_t\sim\mathrm{student}}\|v_\theta(z_t,t)-v_T(z_t,t)\|_2^2\)。</dd></div><div><dt>我的判断</dt><dd>这是最容易理解的图像 OPD：老师不是看终点图，而是沿学生 ODE 路线纠正方向盘。</dd></div></dl></article>
+          <article class="method-card image-method"><span class="label">D-OPSD · 2026</span><h3>text-only 学生 vs text+image 教师</h3><dl><div><dt>问题</dt><dd>few-step T2I 直接 SFT 会破坏少步推理能力。</dd></div><div><dt>信号</dt><dd>同模型双视角：学生只看文本，教师看文本+目标图像，在学生 rollout 上匹配预测分布或速度。</dd></div><div><dt>公式类比</dt><dd>\(D(\pi_{\mathrm{text}}(\cdot|z_t),\pi_{\mathrm{text+image}}(\cdot|z_t))\)。</dd></div><div><dt>我的判断</dt><dd>它把 OPSD 的开卷/闭卷思想搬到图像：参考图像就是 privileged context。</dd></div></dl></article>
+          <article class="method-card image-method"><span class="label">Flow-OPD · 2026</span><h3>多任务 flow alignment</h3><dl><div><dt>问题</dt><dd>多 reward RL 有稀疏奖励、指标跷跷板和 reward hacking。</dd></div><div><dt>信号</dt><dd>任务专家先单独 RL，再通过学生 SDE rollout 的 dense trajectory supervision 合并。</dd></div><div><dt>公式类比</dt><dd>\(\sum_i w_iD_{\mathrm{KL}}(p_\theta(z_{t-1}|z_t)\|p_{E_i}(z_{t-1}|z_t))\)。</dd></div><div><dt>我的判断</dt><dd>它把“多专家合并”从 LLM 搬到 flow model，难点变成专家冲突和轨迹锚定。</dd></div></dl></article>
+          <article class="method-card image-method"><span class="label">DiffusionOPD · 2026</span><h3>连续状态 Markov OPD</h3><dl><div><dt>问题</dt><dd>多任务 diffusion RL 联合训练干扰，串行训练易遗忘。</dd></div><div><dt>信号</dt><dd>在学生 rollout 轨迹上做 per-step KL / mean matching，统一 SDE 和 ODE refinement。</dd></div><div><dt>公式类比</dt><dd>\(\sum_tD_{\mathrm{KL}}(p_\theta(z_{t-1}|z_t)\|p_T(z_{t-1}|z_t))\)。</dd></div><div><dt>我的判断</dt><dd>这是图像 OPD 的理论桥：把离散 token prefix 推广成连续 Markov denoising state。</dd></div></dl></article>
+          <article class="method-card image-method"><span class="label">AnyFlow / LiveTalk</span><h3>视频与实时交互</h3><dl><div><dt>问题</dt><dd>少步视频生成常丢失 test-time scaling 或实时交互能力。</dd></div><div><dt>信号</dt><dd>AnyFlow 用 flow-map transition 学习；LiveTalk 改进 multimodal 条件下的 on-policy distillation recipe。</dd></div><div><dt>公式类比</dt><dd>\(\|F_\theta(z_t,t,\Delta t)-F_T(z_t,t,\Delta t)\|\)：匹配学生当前状态的流映射。</dd></div><div><dt>我的判断</dt><dd>视频 OPD 更重视完整时空轨迹和条件输入质量，不能只看单帧 reward。</dd></div></dl></article>
+        </div>
+        <details style="margin-top:18px">
+          <summary>Papers With Code 抓取说明</summary>
+          <p>本次访问 <a href="https://paperswithcode.co/methods/on-policy-distillation">Papers With Code 方法页</a> 时，普通文本抓取返回动态空壳。因此本页保留该链接作为入口，但事实总结以本地 awesome 列表、arXiv 页面和已下载 PDF 为准。</p>
+        </details>
+      </div>
+    </section>
+
+    <section class="section" id="latest">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow"><span class="dot"></span> 最新进展精选</div>
+          <h2>别追所有论文，先看它们在改 OPD 的哪一块。</h2>
+        </div>
+        <p>这些条目来自更新后的 README / AwesomeOPD，本页只保留方向感。</p>
+      </div>
+      <div class="grid-4">
+        <article class="card latest-card"><span class="label">Veto</span><h3>改 target</h3><p>用 logit-space geometric bridge 和 adaptive gradient veto 稳定教师目标。</p></article>
+        <article class="card latest-card"><span class="label">Prefix OPD</span><h3>改 scope</h3><p>只蒸馏推理前缀，降低长 CoT 训练成本。</p></article>
+        <article class="card latest-card"><span class="label">Uni-OPD</span><h3>改 data balance</h3><p>用 offline difficulty-aware 与 online correctness-aware 选择有信息的学生状态。</p></article>
+        <article class="card latest-card"><span class="label">CaOPD</span><h3>改 calibration</h3><p>用学生 rollout 的 empirical success rate 替代不可靠的自信度目标。</p></article>
+        <article class="card latest-card"><span class="label">ROPD</span><h3>改 black-box signal</h3><p>用 prompt-specific rubrics 把黑盒教师偏好变成结构化 reward。</p></article>
+        <article class="card latest-card"><span class="label">MAD-OPD</span><h3>改 teacher</h3><p>让多教师 debate 产生 collective token supervision。</p></article>
+        <article class="card latest-card"><span class="label">SOD</span><h3>改 step weighting</h3><p>按 step-level divergence 重加权教师指导，减少 agent 轨迹漂移。</p></article>
+        <article class="card latest-card"><span class="label">NPD</span><h3>改 systems</h3><p>异步生成与选择性 packing，让近似 on-policy 更高吞吐。</p></article>
+      </div>
+    </section>
+
+    <section class="section" id="practice">
+      <div class="route">
+        <div class="callout">
+          <h2>实践路线：先跑通 GKD，再碰 diffusion OPD。</h2>
+          <p>不要一上来就实现最复杂的图像 OPD。先理解学生 rollout 和教师 guidance 的接口，再把 token 状态替换成 latent trajectory。</p>
+        </div>
+        <div class="source-list">
+          <h3>建议顺序</h3>
+          <ul>
+            <li>第一天：读 <a href="OPD学习文档.md">本地 Markdown 文档</a> 的统一公式和 MiniLLM/GKD/ExOPD。</li>
+            <li>第二天：读 Revisiting、Entropy-Aware、Rethinking，知道 OPD 为什么会崩。</li>
+            <li>第三天：选方向。白盒看 GKD/verl；黑盒看 GAD/ROPD；自蒸馏看 OPSD/SDFT/OPCD。</li>
+            <li>图像方向：先读 <a href="https://arxiv.org/abs/2510.14974">pi-Flow</a>，再读 <a href="https://arxiv.org/abs/2605.15055">DiffusionOPD</a> 和 <a href="https://arxiv.org/abs/2605.05204">D-OPSD</a>。</li>
+            <li>实现时问四个问题：谁采样、教师能给什么、loss 作用在哪些状态、稳定机制是什么。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <span>OPD Study Guide · generated from local Markdown, README, AwesomeOPD, arXiv sources</span>
+      <span><a href="opd-visual-guide.html">返回快速导览</a></span>
+    </div>
+  </footer>
+
+  <script>
+    const buttons = Array.from(document.querySelectorAll('.filter-button'));
+    const items = Array.from(document.querySelectorAll('.js-filter'));
+
+    buttons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const filter = button.dataset.filter;
+        buttons.forEach((item) => item.classList.toggle('active', item === button));
+        items.forEach((item) => {
+          item.hidden = filter !== 'all' && item.dataset.kind !== filter;
+        });
+      });
+    });
+  </script>
+</body>
+</html>

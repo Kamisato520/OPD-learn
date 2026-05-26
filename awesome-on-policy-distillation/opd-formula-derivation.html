@@ -1,0 +1,1038 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OPD Formula Derivation · 从零推导核心公式</title>
+  <meta name="description" content="从概率、KL、交叉熵开始，逐步推导 OPD、GKD、ExOPD 与 diffusion/flow OPD 的核心公式。">
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['\\(', '\\)']], displayMath: [['$$', '$$']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+  <style>
+    :root {
+      --primary: #cc785c;
+      --primary-active: #a9583e;
+      --ink: #141413;
+      --body: #3d3d3a;
+      --body-strong: #252523;
+      --muted: #6c6a64;
+      --hairline: #e6dfd8;
+      --canvas: #faf9f5;
+      --surface-soft: #f5f0e8;
+      --surface-card: #efe9de;
+      --surface-dark: #181715;
+      --surface-dark-elevated: #252320;
+      --surface-dark-soft: #1f1e1b;
+      --on-dark: #faf9f5;
+      --on-dark-soft: #a09d96;
+      --accent-teal: #5db8a6;
+      --accent-amber: #e8a55a;
+      --max: 1180px;
+      --radius: 12px;
+      --radius-sm: 8px;
+      --display: "Cormorant Garamond", "Tiempos Headline", Garamond, "Times New Roman", serif;
+      --sans: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans SC", "Microsoft YaHei", sans-serif;
+      --mono: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--canvas);
+    }
+
+    body {
+      margin: 0;
+      overflow-x: hidden;
+      color: var(--body);
+      background:
+        linear-gradient(180deg, rgba(245, 240, 232, 0.88), rgba(250, 249, 245, 0) 520px),
+        var(--canvas);
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.58;
+      letter-spacing: 0;
+    }
+
+    a {
+      color: var(--primary-active);
+      text-decoration: none;
+    }
+
+    a:hover { text-decoration: underline; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid var(--hairline);
+      background: rgba(250, 249, 245, 0.94);
+      backdrop-filter: blur(14px);
+    }
+
+    .nav {
+      max-width: var(--max);
+      min-height: 64px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--ink);
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .mark {
+      width: 20px;
+      height: 20px;
+      color: var(--ink);
+      flex: 0 0 auto;
+    }
+
+    .navlinks {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 6px;
+    }
+
+    .navlinks a {
+      color: var(--muted);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .navlinks a:hover {
+      color: var(--ink);
+      background: var(--surface-card);
+    }
+
+    .section {
+      max-width: var(--max);
+      width: 100%;
+      margin: 0 auto;
+      padding: 76px 24px;
+    }
+
+    .hero {
+      min-height: 760px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(360px, 0.78fr);
+      gap: 48px;
+      align-items: center;
+      padding-top: 58px;
+      padding-bottom: 70px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 18px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--primary);
+      display: inline-block;
+    }
+
+    h1, h2, h3 {
+      margin: 0;
+      color: var(--ink);
+      font-family: var(--display);
+      font-weight: 500;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      max-width: 820px;
+      font-size: 64px;
+      line-height: 1.03;
+    }
+
+    h2 {
+      font-size: 44px;
+      line-height: 1.1;
+      margin-bottom: 14px;
+    }
+
+    h3 {
+      font-size: 25px;
+      line-height: 1.2;
+      margin-bottom: 10px;
+    }
+
+    .lead {
+      max-width: 760px;
+      margin: 22px 0 0;
+      color: var(--body-strong);
+      font-size: 20px;
+      line-height: 1.5;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .button {
+      min-height: 40px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-sm);
+      padding: 12px 18px;
+      border: 1px solid var(--hairline);
+      font-size: 14px;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .button.primary {
+      border-color: var(--primary);
+      color: #fff;
+      background: var(--primary);
+    }
+
+    .button.secondary {
+      color: var(--ink);
+      background: var(--canvas);
+    }
+
+    .button:hover { text-decoration: none; }
+    .button.primary:hover { background: var(--primary-active); border-color: var(--primary-active); }
+    .button.secondary:hover { background: var(--surface-card); }
+
+    .dark-panel {
+      min-width: 0;
+      width: 100%;
+      border-radius: 16px;
+      background: var(--surface-dark);
+      color: var(--on-dark);
+      padding: 28px;
+      overflow: hidden;
+    }
+
+    .panel-kicker {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      color: var(--on-dark-soft);
+      font-size: 13px;
+      margin-bottom: 18px;
+    }
+
+    .mini-steps {
+      display: grid;
+      gap: 10px;
+    }
+
+    .mini-step {
+      border: 1px solid rgba(250, 249, 245, 0.09);
+      border-radius: 10px;
+      padding: 14px;
+      background: var(--surface-dark-soft);
+    }
+
+    .mini-step strong {
+      display: block;
+      color: var(--on-dark);
+      margin-bottom: 4px;
+    }
+
+    .mini-step span {
+      color: var(--on-dark-soft);
+      font-size: 14px;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 28px;
+      margin-bottom: 28px;
+    }
+
+    .section-head p {
+      max-width: 640px;
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .grid-2,
+    .grid-3 {
+      display: grid;
+      gap: 16px;
+    }
+
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    .card,
+    .derivation,
+    .checkpoint {
+      min-width: 0;
+      border-radius: var(--radius);
+      padding: 22px;
+      background: var(--surface-card);
+      border: 1px solid rgba(20, 20, 19, 0.03);
+    }
+
+    .card h3,
+    .derivation h3,
+    .checkpoint h3 {
+      font-family: var(--sans);
+      font-size: 18px;
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    .card p,
+    .derivation p,
+    .checkpoint p {
+      margin: 0;
+    }
+
+    .card p + p,
+    .derivation p + p,
+    .checkpoint p + p {
+      margin-top: 12px;
+    }
+
+    .label {
+      display: block;
+      color: var(--primary-active);
+      font-size: 12px;
+      font-weight: 850;
+      margin-bottom: 8px;
+    }
+
+    .math {
+      margin: 14px 0;
+      padding: 16px;
+      border-radius: var(--radius-sm);
+      overflow-x: auto;
+      background: var(--surface-dark);
+      color: var(--on-dark);
+      font-family: var(--mono);
+      font-size: 13px;
+    }
+
+    .math.light {
+      background: var(--canvas);
+      color: var(--ink);
+      border: 1px solid var(--hairline);
+    }
+
+    .bridge {
+      border-radius: 16px;
+      padding: 28px;
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .bridge h2,
+    .bridge h3 {
+      color: #fff;
+    }
+
+    .bridge p {
+      margin: 0;
+      color: rgba(255, 255, 255, 0.88);
+    }
+
+    .derive-band {
+      background: var(--surface-dark);
+      color: var(--on-dark);
+    }
+
+    .derive-band h2,
+    .derive-band h3 {
+      color: var(--on-dark);
+    }
+
+    .derive-band .section-head p,
+    .derive-band .eyebrow {
+      color: var(--on-dark-soft);
+    }
+
+    .derive-band .derivation {
+      background: var(--surface-dark-soft);
+      border: 1px solid rgba(250, 249, 245, 0.08);
+    }
+
+    .derive-band .derivation p {
+      color: var(--on-dark-soft);
+    }
+
+    .derive-band .label {
+      color: var(--accent-amber);
+    }
+
+    .derive-band .math {
+      background: var(--surface-dark-elevated);
+    }
+
+    .line {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .line div {
+      border-left: 3px solid var(--primary);
+      padding-left: 12px;
+    }
+
+    .line strong {
+      display: block;
+      color: var(--ink);
+      margin-bottom: 2px;
+    }
+
+    .derive-band .line strong {
+      color: var(--on-dark);
+    }
+
+    .example {
+      border-radius: 16px;
+      padding: 24px;
+      background: var(--canvas);
+      border: 1px solid var(--hairline);
+    }
+
+    .example table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      margin-top: 12px;
+    }
+
+    .example th,
+    .example td {
+      border-bottom: 1px solid var(--hairline);
+      padding: 10px 8px;
+      text-align: left;
+    }
+
+    .example th {
+      color: var(--ink);
+      font-weight: 800;
+    }
+
+    .note {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid var(--hairline);
+      color: var(--ink);
+      font-weight: 800;
+    }
+
+    .derive-band .note {
+      border-color: rgba(250, 249, 245, 0.12);
+      color: var(--on-dark);
+    }
+
+    .timeline {
+      display: grid;
+      gap: 14px;
+    }
+
+    .checkpoint {
+      display: grid;
+      grid-template-columns: 46px 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .num {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      font-weight: 900;
+      font-size: 14px;
+    }
+
+    .source-list {
+      border-radius: var(--radius);
+      padding: 24px;
+      background: var(--surface-card);
+    }
+
+    .source-list ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    .source-list li + li { margin-top: 8px; }
+
+    footer {
+      background: var(--surface-dark);
+      color: var(--on-dark-soft);
+      padding: 32px 24px;
+    }
+
+    .footer-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+      font-size: 14px;
+    }
+
+    .footer-inner a { color: var(--on-dark); }
+
+    @media (max-width: 1050px) {
+      .hero,
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+
+      .grid-3 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 720px) {
+      .nav {
+        align-items: flex-start;
+        flex-direction: column;
+        padding-top: 14px;
+        padding-bottom: 14px;
+      }
+
+      .navlinks { justify-content: flex-start; }
+
+      .section,
+      .hero {
+        max-width: 100%;
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+
+      .section {
+        padding-top: 54px;
+        padding-bottom: 54px;
+      }
+
+      .hero {
+        min-height: auto;
+        padding-top: 44px;
+        gap: 32px;
+      }
+
+      h1 {
+        font-size: 36px;
+        line-height: 1.08;
+      }
+
+      h2 { font-size: 32px; }
+
+      h1, h2, h3, p, li, td, th {
+        overflow-wrap: anywhere;
+      }
+
+      .lead { font-size: 17px; }
+      .dark-panel, .bridge { padding: 20px; }
+
+      .section-head {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .grid-3 {
+        grid-template-columns: 1fr;
+      }
+
+      .checkpoint {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <nav class="nav" aria-label="主导航">
+      <a class="brand" href="#top" aria-label="返回顶部">
+        <svg class="mark" viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" d="M11 1h2v8.17l5.78-5.78 1.42 1.42L14.42 10.6H23v2h-8.58l5.78 5.79-1.42 1.41L13 14.02V23h-2v-8.98L5.22 19.8 3.8 18.39l5.78-5.79H1v-2h8.58L3.8 4.81l1.42-1.42L11 9.17V1Z"/>
+        </svg>
+        <span>OPD Formula Lab</span>
+      </a>
+      <div class="navlinks">
+        <a href="#base">基础</a>
+        <a href="#kd">KD</a>
+        <a href="#opd">OPD</a>
+        <a href="#adv">Advantage</a>
+        <a href="#gkd">GKD</a>
+        <a href="#rl">ExOPD</a>
+        <a href="#image">图像</a>
+        <a href="opd-study-guide.html">详细页</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="section hero">
+      <div>
+        <div class="eyebrow"><span class="dot"></span> 子页面 · 公式推导课</div>
+        <h1>从最基础的概率，推到 OPD 的核心公式。</h1>
+        <p class="lead">这页不做论文百科，只带你把关键公式推一遍：为什么 SFT 是 NLL，为什么 KD 是 KL，为什么 OPD 要在学生 rollout 上算 KL，为什么 sampled-token advantage、GKD、ExOPD 和 diffusion trajectory 都是同一条线。</p>
+        <div class="actions">
+          <a class="button primary" href="#base">从零开始</a>
+          <a class="button secondary" href="#image">直接看图像 OPD 推导</a>
+          <a class="button secondary" href="opd-study-guide.html">回详细学习页</a>
+        </div>
+      </div>
+      <aside class="dark-panel" aria-label="推导路线">
+        <div class="panel-kicker">
+          <span>derivation path</span>
+          <span>one idea, many formulas</span>
+        </div>
+        <div class="mini-steps">
+          <div class="mini-step"><strong>1. 概率模型</strong><span>模型不是直接吐答案，而是在每一步给下一个 token 或 latent state 的分布。</span></div>
+          <div class="mini-step"><strong>2. KL 距离</strong><span>KD 是让学生分布接近教师分布；方向不同，行为不同。</span></div>
+          <div class="mini-step"><strong>3. On-policy</strong><span>OPD 把期望放到学生自己访问的状态上。</span></div>
+          <div class="mini-step"><strong>4. 图像轨迹</strong><span>扩散/flow 里，token prefix 换成 denoising 或 velocity trajectory。</span></div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="section" id="base">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow"><span class="dot"></span> 0. 最小数学地基</div>
+          <h2>模型的本质：给“下一步”分配概率。</h2>
+        </div>
+        <p>如果你只记一件事：语言模型不是一次生成整篇答案，而是一步一步选择 token。图像 diffusion / flow 也类似，只是“下一步”发生在 latent 空间。</p>
+      </div>
+      <div class="grid-3">
+        <article class="card">
+          <span class="label">概率</span>
+          <h3>一个上下文，一个分布</h3>
+          <p>给定前缀 \(c_t=(x,y_{&lt;t})\)，学生模型输出 \(\pi_\theta(\cdot|c_t)\)，教师输出 \(\pi_T(\cdot|c_t)\)。</p>
+          <div class="math light">$$\sum_v \pi_\theta(v|c_t)=1,\quad \pi_\theta(v|c_t)\ge 0$$</div>
+          <p class="note">直觉：同一道题走到同一个路口，学生和老师各自给一张“下一步概率表”。</p>
+        </article>
+        <article class="card">
+          <span class="label">序列概率</span>
+          <h3>整段答案是逐步相乘</h3>
+          <p>一个答案 \(y=(y_1,\dots,y_T)\) 的概率来自每一步 token 概率的乘积。</p>
+          <div class="math light">$$\pi_\theta(y|x)=\prod_{t=1}^T \pi_\theta(y_t|x,y_{&lt;t})$$</div>
+          <p class="note">所以长答案一旦前面走偏，后面看到的状态就和训练数据不同。</p>
+        </article>
+        <article class="card">
+          <span class="label">负对数似然</span>
+          <h3>乘法变加法</h3>
+          <p>训练时常最小化负 log 概率，因为 log 把乘积变成每一步损失相加。</p>
+          <div class="math light">$$-\log\pi_\theta(y|x)=-\sum_{t=1}^T\log\pi_\theta(y_t|x,y_{&lt;t})$$</div>
+          <p class="note">这就是 SFT 的起点：让标准答案每一步概率变大。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="sft">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow"><span class="dot"></span> 1. 从 SFT 推到 exposure bias</div>
+          <h2>SFT 学的是标准路线，不是学生真实会走到的路线。</h2>
+        </div>
+        <p>SFT 的公式很自然，但它默认训练时的前缀来自标准答案。推理时前缀来自学生自己，这就是后面 OPD 要修的地方。</p>
+      </div>
+      <div class="grid-2">
+        <article class="derivation">
+          <span class="label">SFT objective</span>
+          <h3>从最大似然到 NLL</h3>
+          <p>数据集中有标准答案 \(y^\*\)。最大化它的概率，等价于最小化负 log 概率。</p>
+          <div class="math">$$\max_\theta\ \log\pi_\theta(y^\*|x)
+\quad\Longleftrightarrow\quad
+\min_\theta\ -\sum_t\log\pi_\theta(y_t^\*|x,y^\*_{&lt;t})$$</div>
+          <p class="note">结论：SFT 的监督状态是 \(c_t^\*=(x,y^\*_{&lt;t})\)。</p>
+        </article>
+        <article class="bridge">
+          <h2>问题出在哪里？</h2>
+          <p>推理时，学生看到的是 \(c_t=(x,y_{&lt;t})\)，其中 \(y_{&lt;t}\sim\pi_\theta\)。如果学生第 3 步走错，第 4 步的状态就不是训练里的标准前缀。SFT 没告诉它“你已经走歪时该怎么办”。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="derive-band" id="kd">
+      <div class="section">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow"><span class="dot"></span> 2. 从 SFT 到 KD</div>
+            <h2>KD 的第一步：别只学一个答案，学老师的概率表。</h2>
+          </div>
+          <p>教师不是只说“正确 token 是 A”，而是给每个 token 一个概率。这样学生能学到相似词、犹豫程度和多解结构。</p>
+        </div>
+        <div class="grid-2">
+          <article class="derivation">
+            <span class="label">cross entropy</span>
+            <h3>教师分布监督学生</h3>
+            <p>在同一上下文 \(c\) 上，教师分布是 \(\pi_T\)，学生分布是 \(\pi_\theta\)。让学生给教师高概率 token 也高概率：</p>
+            <div class="math">$$H(\pi_T,\pi_\theta)=-\sum_v\pi_T(v|c)\log\pi_\theta(v|c)$$</div>
+            <p>交叉熵可拆成教师自己的熵加 forward KL：</p>
+            <div class="math">$$H(\pi_T,\pi_\theta)=H(\pi_T)+D_{\mathrm{KL}}(\pi_T\|\pi_\theta)$$</div>
+            <p class="note">因为 \(H(\pi_T)\) 与学生无关，最小化交叉熵就是最小化 \(D_{\mathrm{KL}}(\pi_T\|\pi_\theta)\)。</p>
+          </article>
+          <article class="derivation">
+            <span class="label">offline KD</span>
+            <h3>传统 KD 仍然可能离线</h3>
+            <p>如果上下文来自数据或教师答案，KD 目标是：</p>
+            <div class="math">$$\mathcal L_{\mathrm{KD}}=\mathbb E_{(x,y)\sim\mathcal D}\sum_tD_{\mathrm{KL}}(\pi_T(\cdot|x,y_{&lt;t})\|\pi_\theta(\cdot|x,y_{&lt;t}))$$</div>
+            <p class="note">结论：KD 比 SFT 软，但状态仍不一定是学生自己会访问的状态。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="opd">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow"><span class="dot"></span> 3. 推出 OPD 核心公式</div>
+          <h2>只改一个东西：期望从数据分布换成学生 rollout。</h2>
+        </div>
+        <p>这是 OPD 最核心的数学动作。老师仍然给分布指导，但老师评估的前缀来自学生自己。</p>
+      </div>
+      <div class="grid-2">
+        <article class="derivation">
+          <span class="label">student rollout</span>
+          <h3>先让学生自己走</h3>
+          <p>学生按当前策略生成整段答案：</p>
+          <div class="math light">$$y=(y_1,\dots,y_T)\sim\pi_\theta(\cdot|x),\quad c_t=(x,y_{&lt;t})$$</div>
+          <p>然后教师在这些真实前缀上给分布。</p>
+          <div class="math light">$$\pi_T(\cdot|c_t),\quad \pi_\theta(\cdot|c_t)$$</div>
+          <p class="note">这一步让训练状态和推理状态对齐。</p>
+        </article>
+        <article class="derivation">
+          <span class="label">OPD objective</span>
+          <h3>在学生状态上做分布匹配</h3>
+          <p>于是得到通用 OPD 目标：</p>
+          <div class="math light">$$\mathcal L_{\mathrm{OPD}}(\theta)=
+\mathbb E_{x\sim\mathcal D,\ y\sim\pi_\theta(\cdot|x)}
+\sum_{t=1}^{T}\mathcal D\!\left(\pi_T(\cdot|c_t),\pi_\theta(\cdot|c_t)\right)$$</div>
+          <p class="note">结论：OPD = student rollout distribution + teacher dense guidance。</p>
+        </article>
+      </div>
+      <div class="example" style="margin-top:16px">
+        <h3>一个极小例子：为什么 on-policy 有价值</h3>
+        <p>假设标准答案前缀是“解方程”，但学生生成了“猜答案”。离线 KD 只在“解方程”后教学生下一步；OPD 会让教师在“猜答案”这个错误前缀上告诉学生：下一步应该回到推理或校验。</p>
+        <p class="note">这不是数学 trick，而是数据分布变了：训练开始覆盖学生真实错误。</p>
+      </div>
+    </section>
+
+    <section class="section" id="kl">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow"><span class="dot"></span> 4. KL 方向：为什么 reverse KL 很重要</div>
+          <h2>forward KL 和 reverse KL 看起来只换了顺序，行为完全不同。</h2>
+        </div>
+        <p>这正是 MiniLLM、GKD、Entropy-Aware OPD 等论文反复讨论的核心。</p>
+      </div>
+      <div class="grid-2">
+        <article class="derivation">
+          <span class="label">forward KL</span>
+          <h3>覆盖老师可能的答案</h3>
+          <div class="math light">$$D_{\mathrm{KL}}(\pi_T\|\pi_\theta)=
+\sum_v\pi_T(v|c)\log\frac{\pi_T(v|c)}{\pi_\theta(v|c)}$$</div>
+          <p>如果教师认为某 token 有概率，而学生给接近 0，会被严重惩罚。</p>
+          <p class="note">倾向：mode-covering，保多样性。</p>
+        </article>
+        <article class="derivation">
+          <span class="label">reverse KL</span>
+          <h3>压掉学生不该走的路</h3>
+          <div class="math light">$$D_{\mathrm{KL}}(\pi_\theta\|\pi_T)=
+\sum_v\pi_\theta(v|c)\log\frac{\pi_\theta(v|c)}{\pi_T(v|c)}$$</div>
+          <p>如果学生把概率放到教师很不认可的 token 上，会被严重惩罚。</p>
+          <p class="note">倾向：mode-seeking，压错误模式。</p>
+        </article>
+      </div>
+      <div class="example" style="margin-top:16px">
+        <h3>两 token 数字直觉</h3>
+        <p>教师认为 \(A=0.9,B=0.1\)。如果学生给 \(A=0.5,B=0.5\)，reverse KL 会明显惩罚学生把过多概率放到 \(B\)；forward KL 则更强调别漏掉教师认为可能的 \(A\) 和 \(B\)。</p>
+        <table>
+          <thead><tr><th>KL 方向</th><th>最怕什么</th><th>适合什么</th></tr></thead>
+          <tbody>
+            <tr><td>\(D_{\mathrm{KL}}(\pi_T\|\pi_\theta)\)</td><td>学生漏掉教师可能答案</td><td>多解、多样性、保覆盖</td></tr>
+            <tr><td>\(D_{\mathrm{KL}}(\pi_\theta\|\pi_T)\)</td><td>学生走到教师低概率区域</td><td>压错误、强到弱压缩、稳定输出</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="derive-band" id="adv">
+      <div class="section">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow"><span class="dot"></span> 5. 从 reverse KL 推到 sampled-token advantage</div>
+            <h2>老师比学生更支持这个 token，就增加它；否则降低它。</h2>
+          </div>
+          <p>这是 MiniLLM 和多种工业 recipe 里的重要直觉。严格 full-vocab KL 很贵，所以常把信号压到学生实际采到的 token 上。</p>
+        </div>
+        <div class="grid-2">
+          <article class="derivation">
+            <span class="label">start from reverse KL</span>
+            <h3>把 token 看成从学生采样</h3>
+            <p>单个状态 \(c_t\) 的 reverse KL 是：</p>
+            <div class="math">$$D_{\mathrm{KL}}(\pi_\theta\|\pi_T)=
+\mathbb E_{y_t\sim\pi_\theta(\cdot|c_t)}
+\left[\log\pi_\theta(y_t|c_t)-\log\pi_T(y_t|c_t)\right]$$</div>
+            <p>把括号取负，就得到“教师相对学生更支持多少”的量：</p>
+            <div class="math">$$A_t=\log\pi_T(y_t|c_t)-\log\pi_\theta(y_t|c_t)$$</div>
+          </article>
+          <article class="derivation">
+            <span class="label">policy-gradient view</span>
+            <h3>用 advantage 更新采样 token</h3>
+            <p>最小化 reverse KL 可以近似写成增强教师更认可的采样 token：</p>
+            <div class="math">$$\nabla_\theta \mathcal L_{\mathrm{RKL}}
+\approx -\mathbb E_{y_t\sim\pi_\theta}
+\left[A_t\nabla_\theta\log\pi_\theta(y_t|c_t)\right]$$</div>
+            <p class="note">结论：\(A_t&gt;0\) 增加该 token；\(A_t&lt;0\) 降低该 token。</p>
+          </article>
+        </div>
+        <div class="derivation" style="margin-top:16px">
+          <span class="label">caution</span>
+          <h3>为什么后续论文要修它</h3>
+          <p>sampled-token advantage 便宜，但只看一个采样 token，方差高。Revisiting OPD 改为 top-K support matching；Entropy-Aware OPD 在教师高熵位置补 forward KL；Rethinking OPD 用 overlap 和 entropy gap 判断教师是否可教。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="gkd">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow"><span class="dot"></span> 6. 推出 GKD 混合目标</div>
+          <h2>GKD 是一个旋钮：从离线 KD 慢慢拧到纯 OPD。</h2>
+        </div>
+        <p>如果一开始纯学生 rollout 不稳，可以混合数据轨迹和学生轨迹。这个思想非常适合工程入门。</p>
+      </div>
+      <div class="grid-2">
+        <article class="derivation">
+          <span class="label">two data sources</span>
+          <h3>离线状态 + 学生状态</h3>
+          <p>离线 KD 的期望来自数据：</p>
+          <div class="math light">$$\mathbb E_{(x,y)\sim\mathcal D}\sum_tD(\pi_T,\pi_\theta)$$</div>
+          <p>OPD 的期望来自学生：</p>
+          <div class="math light">$$\mathbb E_{x\sim\mathcal D,\ y\sim\pi_\theta}\sum_tD(\pi_T,\pi_\theta)$$</div>
+        </article>
+        <article class="derivation">
+          <span class="label">mixture objective</span>
+          <h3>用 \(\lambda\) 混合</h3>
+          <div class="math light">$$\mathcal L_{\mathrm{GKD}}=
+(1-\lambda)\mathbb E_{(x,y)\sim\mathcal D}\sum_tD_t
++\lambda\mathbb E_{x\sim\mathcal D,\ y\sim\pi_\theta}\sum_tD_t$$</div>
+          <p class="note">\(\lambda=0\) 是离线 KD；\(\lambda=1\) 是纯 OPD。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="derive-band" id="rl">
+      <div class="section">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow"><span class="dot"></span> 7. 从 KL-constrained RL 推到 ExOPD</div>
+            <h2>OPD 也可以从 RL 推出来：教师分布就是一个 dense reward。</h2>
+          </div>
+          <p>这一步很关键：它解释了为什么 OPD 处在 SFT/KD 和 RL 之间。</p>
+        </div>
+        <div class="timeline">
+          <article class="checkpoint">
+            <div class="num">1</div>
+            <div>
+              <h3>从 KL 约束 RL 开始</h3>
+              <p>我们希望学生拿高 reward，但不要离 reference 太远：</p>
+              <div class="math">$$\max_{\pi}\ \mathbb E_{y\sim\pi}\left[r(y)\right]-\beta D_{\mathrm{KL}}(\pi(y|x)\|\pi_{\mathrm{ref}}(y|x))$$</div>
+            </div>
+          </article>
+          <article class="checkpoint">
+            <div class="num">2</div>
+            <div>
+              <h3>最优策略的形状</h3>
+              <p>这个优化的解满足：</p>
+              <div class="math">$$\pi^\*(y|x)\propto \pi_{\mathrm{ref}}(y|x)\exp\left(\frac{r(y)}{\beta}\right)$$</div>
+              <p>直觉：reference 给底盘，reward 把好答案指数级放大。</p>
+            </div>
+          </article>
+          <article class="checkpoint">
+            <div class="num">3</div>
+            <div>
+              <h3>让最优策略等于教师</h3>
+              <p>如果我们想让 \(\pi^\*=\pi_T\)，只要设置：</p>
+              <div class="math">$$r_T(y|x)=\beta\log\frac{\pi_T(y|x)}{\pi_{\mathrm{ref}}(y|x)}$$</div>
+              <p>代回去得到 \(\pi^\*\propto\pi_{\mathrm{ref}}\frac{\pi_T}{\pi_{\mathrm{ref}}}=\pi_T\)。</p>
+            </div>
+          </article>
+          <article class="checkpoint">
+            <div class="num">4</div>
+            <div>
+              <h3>ExOPD：缩放教师 reward</h3>
+              <p>如果把 reward 乘以 \(\lambda\)：</p>
+              <div class="math">$$\pi_\lambda(y|x)\propto
+\pi_{\mathrm{ref}}(y|x)\exp\left(\lambda\log\frac{\pi_T(y|x)}{\pi_{\mathrm{ref}}(y|x)}\right)
+=\pi_T(y|x)^\lambda\pi_{\mathrm{ref}}(y|x)^{1-\lambda}$$</div>
+              <p class="note">\(\lambda=1\) 回到教师；\(\lambda&lt;1\) 是保守蒸馏；\(\lambda&gt;1\) 是沿教师偏好外推。</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="blackbox">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow"><span class="dot"></span> 8. 黑盒 OPD 的推导位置</div>
+          <h2>拿不到 logits 时，KL 公式不消失，而是被 reward 近似。</h2>
+        </div>
+        <p>如果教师是 API，你不能计算 \(\pi_T(v|c)\)。这时只能学习一个替代信号：判别器、rubric、verbal score 或 preference reward。</p>
+      </div>
+      <div class="grid-2">
+        <article class="derivation">
+          <span class="label">white-box unavailable</span>
+          <h3>不能算 token KL</h3>
+          <div class="math light">$$D_{\mathrm{KL}}(\pi_\theta(\cdot|c_t)\|\pi_T(\cdot|c_t))\quad\text{requires teacher logits}$$</div>
+          <p>黑盒教师只给文本，所以只能比较完整输出或偏好。</p>
+        </article>
+        <article class="derivation">
+          <span class="label">reward replacement</span>
+          <h3>用 \(D_\phi\) 学教师品味</h3>
+          <div class="math light">$$\max_\theta\ \mathbb E_{y\sim\pi_\theta}D_\phi(x,y)-\beta D_{\mathrm{KL}}(\pi_\theta\|\pi_{\mathrm{ref}})$$</div>
+          <p class="note">结论：黑盒 OPD 更像 RL；瓶颈从 KL 计算转为 reward 可靠性。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="derive-band" id="image">
+      <div class="section">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow"><span class="dot"></span> 9. 图像生成 OPD：从 token KL 推到 trajectory matching</div>
+            <h2>图像模型的“下一步”不是 token，而是 latent 状态。</h2>
+          </div>
+          <p>这部分是你的重点方向。核心桥梁：把 \(c_t=(x,y_{&lt;t})\) 换成 diffusion/flow 的 \(z_t\)。</p>
+        </div>
+        <div class="grid-2">
+          <article class="derivation">
+            <span class="label">diffusion Markov step</span>
+            <h3>从 token 分布换成状态转移分布</h3>
+            <p>语言 OPD 在每个前缀上比较 token 分布：</p>
+            <div class="math">$$D_{\mathrm{KL}}(\pi_\theta(\cdot|c_t)\|\pi_T(\cdot|c_t))$$</div>
+            <p>扩散模型在每个 latent state 上比较反向转移分布：</p>
+            <div class="math">$$D_{\mathrm{KL}}(p_\theta(z_{t-\Delta}|z_t,c)\|p_T(z_{t-\Delta}|z_t,c))$$</div>
+            <p class="note">学生 rollout 对应 \(z_t\sim p_\theta\) 产生的去噪轨迹。</p>
+          </article>
+          <article class="derivation">
+            <span class="label">Gaussian KL</span>
+            <h3>为什么会变成 mean / velocity L2</h3>
+            <p>如果两个反向转移都是同方差高斯：</p>
+            <div class="math">$$p_\theta=\mathcal N(\mu_\theta,\sigma^2I),\quad p_T=\mathcal N(\mu_T,\sigma^2I)$$</div>
+            <p>那么 KL 有闭式：</p>
+            <div class="math">$$D_{\mathrm{KL}}(p_\theta\|p_T)=\frac{1}{2\sigma^2}\|\mu_\theta(z_t,t)-\mu_T(z_t,t)\|_2^2$$</div>
+            <p class="note">结论：diffusion OPD 的 per-step KL 可以落成均值匹配。</p>
+          </article>
+          <article class="derivation">
+            <span class="label">flow / ODE</span>
+            <h3>mean matching 推到 velocity matching</h3>
+            <p>flow 或 ODE 里，一步更新常写成：</p>
+            <div class="math">$$z_{t-\Delta}=z_t+\Delta v(z_t,t)$$</div>
+            <p>如果教师和学生只差速度场，那么均值差约等于速度差乘步长：</p>
+            <div class="math">$$\|\mu_\theta-\mu_T\|_2^2\approx \Delta^2\|v_\theta(z_t,t)-v_T(z_t,t)\|_2^2$$</div>
+            <p class="note">这就是 pi-Flow / flow OPD 里常见的 trajectory velocity matching。</p>
+          </article>
+          <article class="derivation">
+            <span class="label">image OPD objective</span>
+            <h3>最终图像 OPD 公式</h3>
+            <p>把期望放到学生自己的 latent trajectory 上：</p>
+            <div class="math">$$\mathcal L_{\mathrm{image\ OPD}}=
+\mathbb E_{z_t\sim\mathrm{student}}\sum_t
+\left[
+D_{\mathrm{KL}}(p_\theta(z_{t-\Delta}|z_t,c)\|p_T(z_{t-\Delta}|z_t,c))
+\right]$$</div>
+            <p>常用近似形式：</p>
+            <div class="math">$$\mathcal L_{\mathrm{traj}}\propto
+\mathbb E_{z_t\sim\mathrm{student}}\sum_t
+\|v_\theta(z_t,t)-v_T(z_t,t)\|_2^2$$</div>
+            <p class="note">我的判断：图像 OPD 的灵魂不是给最终图像打分，而是在学生中间轨迹上持续纠偏。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="conclusion">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow"><span class="dot"></span> 10. 最后把所有公式收束成一句话</div>
+          <h2>OPD 的核心公式只有一个骨架，论文都在替换部件。</h2>
+        </div>
+        <p>如果你能看懂下面这个骨架，就能快速读懂大多数 OPD 论文。</p>
+      </div>
+      <div class="bridge">
+        <h2>统一骨架</h2>
+        <div class="math" style="background: rgba(24,23,21,0.24)">$$
+\mathcal L_{\mathrm{OPD}}=
+\mathbb E_{\text{state}\sim\text{student rollout}}
+\sum_t
+\mathrm{TeacherSignal}\left(\text{student state at }t\right)
+$$</div>
+        <p>语言模型里，state 是 \(c_t=(x,y_{&lt;t})\)，TeacherSignal 是 token KL、top-k KL、advantage 或 reward。图像模型里，state 是 \(z_t\)，TeacherSignal 是 Gaussian KL、mean matching、velocity matching、score matching 或 reward。</p>
+      </div>
+      <div class="grid-3" style="margin-top:16px">
+        <article class="card"><span class="label">结论 1</span><h3>OPD 修的是分布错位</h3><p>SFT/KD 多在标准前缀上训练；OPD 在学生真实前缀上训练。</p></article>
+        <article class="card"><span class="label">结论 2</span><h3>KL 方向决定行为</h3><p>reverse KL 压错误模式，forward KL 保多样性；稳定方法本质是在调这个取舍。</p></article>
+        <article class="card"><span class="label">结论 3</span><h3>图像 OPD 是轨迹纠偏</h3><p>token-level guidance 迁移到 latent trajectory 后，经常变成 mean / velocity / score matching。</p></article>
+      </div>
+    </section>
+
+    <section class="section" id="sources">
+      <div class="source-list">
+        <h3>本页对应阅读材料</h3>
+        <ul>
+          <li><a href="OPD学习文档.md">OPD学习文档.md</a>：完整论文学习文档。</li>
+          <li><a href="opd-study-guide.html">opd-study-guide.html</a>：详细可视化学习页。</li>
+          <li><a href="papers/start-here/02-minillm-2306.08543.pdf">MiniLLM PDF</a>：reverse KL 与 sampled-token OPD 原型。</li>
+          <li><a href="papers/start-here/03-gkd-2306.13649.pdf">GKD PDF</a>：on/off-policy 混合目标。</li>
+          <li><a href="papers/start-here/04-exopd-2602.12125.pdf">ExOPD PDF</a>：OPD 与 KL-constrained RL 的等价视角。</li>
+          <li><a href="README.md">README.md</a> 和 <a href="AwesomeOPD/README.md">AwesomeOPD/README.md</a>：最新方法索引。</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <span>OPD Formula Lab · core derivations for on-policy distillation</span>
+      <span><a href="opd-study-guide.html">返回详细学习页</a></span>
+    </div>
+  </footer>
+</body>
+</html>

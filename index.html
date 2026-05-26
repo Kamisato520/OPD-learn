@@ -1,0 +1,570 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OPD Learn · HTML 总入口</title>
+  <meta name="description" content="OPD learn workspace HTML index linking all local On-Policy Distillation study pages.">
+  <style>
+    :root {
+      --primary: #cc785c;
+      --primary-active: #a9583e;
+      --ink: #141413;
+      --body: #3d3d3a;
+      --muted: #6c6a64;
+      --hairline: #e6dfd8;
+      --canvas: #faf9f5;
+      --surface-soft: #f5f0e8;
+      --surface-card: #efe9de;
+      --surface-dark: #181715;
+      --surface-dark-elevated: #252320;
+      --on-dark: #faf9f5;
+      --on-dark-soft: #a09d96;
+      --accent-teal: #5db8a6;
+      --accent-amber: #e8a55a;
+      --max: 1180px;
+      --radius: 8px;
+      --display: "Cormorant Garamond", "Tiempos Headline", Garamond, "Times New Roman", "Noto Serif SC", serif;
+      --sans: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--canvas);
+    }
+
+    body {
+      margin: 0;
+      color: var(--body);
+      background:
+        linear-gradient(180deg, rgba(245, 240, 232, 0.82), rgba(250, 249, 245, 0) 420px),
+        var(--canvas);
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.55;
+      letter-spacing: 0;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    a:hover { text-decoration: underline; }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid var(--hairline);
+      background: rgba(250, 249, 245, 0.94);
+      backdrop-filter: blur(14px);
+    }
+
+    .nav {
+      max-width: var(--max);
+      min-height: 64px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--ink);
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .mark {
+      width: 21px;
+      height: 21px;
+      border: 2px solid var(--ink);
+      border-radius: 50%;
+      background: radial-gradient(circle at center, var(--primary) 0 26%, transparent 28%);
+    }
+
+    .navlinks {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .navlinks a {
+      color: var(--muted);
+      padding: 8px 10px;
+      border-radius: var(--radius);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .navlinks a:hover {
+      color: var(--ink);
+      background: var(--surface-card);
+      text-decoration: none;
+    }
+
+    .section,
+    .hero {
+      max-width: var(--max);
+      width: 100%;
+      margin: 0 auto;
+      padding: 74px 24px;
+    }
+
+    .hero {
+      min-height: 690px;
+      display: grid;
+      align-items: center;
+      grid-template-columns: minmax(0, 1fr) minmax(340px, 0.82fr);
+      gap: 48px;
+      padding-top: 58px;
+      padding-bottom: 64px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 18px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .eyebrow span {
+      width: 8px;
+      height: 8px;
+      display: inline-block;
+      border-radius: 50%;
+      background: var(--primary);
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      color: var(--ink);
+      font-family: var(--display);
+      font-weight: 500;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      max-width: 840px;
+      font-size: clamp(42px, 6vw, 72px);
+      line-height: 1.02;
+    }
+
+    h2 {
+      font-size: clamp(32px, 4.4vw, 50px);
+      line-height: 1.1;
+    }
+
+    h3 {
+      font-size: 25px;
+      line-height: 1.2;
+    }
+
+    .lead {
+      max-width: 760px;
+      margin: 22px 0 0;
+      color: var(--ink);
+      font-size: clamp(18px, 2vw, 22px);
+      line-height: 1.48;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .button {
+      min-height: 40px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--hairline);
+      border-radius: var(--radius);
+      padding: 12px 18px;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .button.primary {
+      color: #fff;
+      border-color: var(--primary);
+      background: var(--primary);
+    }
+
+    .button.primary:hover {
+      background: var(--primary-active);
+      text-decoration: none;
+    }
+
+    .button.secondary {
+      color: var(--ink);
+      background: var(--canvas);
+    }
+
+    .button.secondary:hover {
+      background: var(--surface-card);
+      text-decoration: none;
+    }
+
+    .hero-media {
+      margin: 0;
+      border: 1px solid var(--hairline);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: var(--surface-card);
+    }
+
+    .hero-media img {
+      width: 100%;
+      min-height: 320px;
+      object-fit: cover;
+      object-position: center;
+      background: var(--surface-card);
+    }
+
+    .hero-media figcaption {
+      padding: 12px 16px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(260px, 0.6fr);
+      gap: 32px;
+      align-items: end;
+      margin-bottom: 32px;
+    }
+
+    .section-head p {
+      margin: 0;
+      color: var(--body);
+      font-size: 17px;
+    }
+
+    .path-grid,
+    .page-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .path-card,
+    .page-card,
+    .hub-card {
+      border: 1px solid var(--hairline);
+      border-radius: var(--radius);
+      background: var(--surface-card);
+    }
+
+    .path-card,
+    .page-card {
+      padding: 22px;
+    }
+
+    .label {
+      color: var(--primary-active);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .path-card h3,
+    .page-card h3 {
+      margin-top: 10px;
+    }
+
+    .path-card p,
+    .page-card p {
+      margin: 12px 0 18px;
+      color: var(--body);
+    }
+
+    .dark-band {
+      color: var(--on-dark);
+      background: var(--surface-dark);
+    }
+
+    .dark-band .section {
+      padding-top: 78px;
+      padding-bottom: 78px;
+    }
+
+    .dark-band h2,
+    .dark-band h3 {
+      color: var(--on-dark);
+    }
+
+    .dark-band p {
+      color: var(--on-dark-soft);
+    }
+
+    .hub-card {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(260px, 0.56fr);
+      gap: 24px;
+      padding: 28px;
+      border-color: rgba(250, 249, 245, 0.14);
+      background: var(--surface-dark-elevated);
+    }
+
+    .hub-links {
+      display: grid;
+      gap: 10px;
+    }
+
+    .hub-links a {
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      border: 1px solid rgba(250, 249, 245, 0.14);
+      border-radius: var(--radius);
+      padding: 10px 12px;
+      color: var(--on-dark);
+      background: var(--surface-dark);
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .hub-links a:hover {
+      border-color: var(--primary);
+      text-decoration: none;
+    }
+
+    .hub-links span {
+      color: var(--primary);
+    }
+
+    .footer {
+      border-top: 1px solid var(--hairline);
+      padding: 28px 24px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 14px;
+    }
+
+    @media (max-width: 960px) {
+      .hero,
+      .section-head,
+      .hub-card {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        min-height: auto;
+      }
+
+      .path-grid,
+      .page-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 680px) {
+      .nav {
+        align-items: flex-start;
+        flex-direction: column;
+        padding-top: 14px;
+        padding-bottom: 14px;
+      }
+
+      .navlinks {
+        justify-content: flex-start;
+      }
+
+      .section,
+      .hero {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+
+      .path-grid,
+      .page-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-media img {
+        min-height: 0;
+        object-fit: contain;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <nav class="nav" aria-label="主导航">
+      <a class="brand" href="index.html"><span class="mark"></span><span>OPD Learn</span></a>
+      <div class="navlinks">
+        <a href="#path">阅读路径</a>
+        <a href="#pages">全部页面</a>
+        <a href="#image-hub">图像后训练</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div>
+        <div class="eyebrow"><span></span> Workspace index</div>
+        <h1>OPD 学习网页总入口。</h1>
+        <p class="lead">这个页面把当前文件夹下的 OPD HTML 串起来：先看快速导览，再看详细学习和公式推导，最后进入图像生成后训练专题站。</p>
+        <div class="hero-actions">
+          <a class="button primary" href="awesome-on-policy-distillation/opd-visual-guide.html">开始快速导览</a>
+          <a class="button secondary" href="#pages">查看全部页面</a>
+        </div>
+      </div>
+      <figure class="hero-media">
+        <img src="awesome-on-policy-distillation/AwesomeOPD/banner.png" alt="OPD trajectory banner">
+        <figcaption>Local OPD materials connected into one entry page.</figcaption>
+      </figure>
+    </section>
+
+    <section class="section" id="path">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow"><span></span> Recommended path</div>
+          <h2>按这个顺序读，先建立直觉，再进入图像后训练。</h2>
+        </div>
+        <p>这些页面都是静态 HTML，可以直接在浏览器中打开。每张卡片都跳向 `awesome-on-policy-distillation` 下的对应页面。</p>
+      </div>
+      <div class="path-grid">
+        <article class="path-card">
+          <span class="label">01 · 快速建立直觉</span>
+          <h3>OPD Visual Guide</h3>
+          <p>用最短路径理解 SFT、OPD、RL 的区别，以及图像生成里的轨迹纠偏。</p>
+          <a class="button secondary" href="awesome-on-policy-distillation/opd-visual-guide.html">打开页面</a>
+        </article>
+        <article class="path-card">
+          <span class="label">02 · 系统学习</span>
+          <h3>OPD Study Guide</h3>
+          <p>详细版学习手册，覆盖公式、Start Here 论文、图像生成 OPD 和最新进展。</p>
+          <a class="button secondary" href="awesome-on-policy-distillation/opd-study-guide.html">打开页面</a>
+        </article>
+        <article class="path-card">
+          <span class="label">03 · 公式推导</span>
+          <h3>OPD Formula Derivation</h3>
+          <p>从概率、KL 和交叉熵推到 GKD、ExOPD、diffusion / flow OPD。</p>
+          <a class="button secondary" href="awesome-on-policy-distillation/opd-formula-derivation.html">打开页面</a>
+        </article>
+      </div>
+    </section>
+
+    <section class="dark-band" id="image-hub">
+      <div class="section">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow"><span></span> Image generation hub</div>
+            <h2>图像生成后训练专题站。</h2>
+          </div>
+          <p>这组页面专门回答如何把 OPD 用在 diffusion、flow、few-step T2I 和多任务图像后训练阶段。</p>
+        </div>
+        <article class="hub-card">
+          <div>
+            <span class="label">专题入口</span>
+            <h3>OPD 图像生成后训练研究站</h3>
+            <p>入口页汇总 PWC 方法信息、关键论文池、后训练决策树和 5 个研究方向。</p>
+            <a class="button primary" href="awesome-on-policy-distillation/opd-image-post-training/index.html">打开专题站</a>
+          </div>
+          <div class="hub-links" aria-label="图像后训练子页面">
+            <a href="awesome-on-policy-distillation/opd-image-post-training/trajectory-opd.html">从 Token 到图像轨迹 <span>01</span></a>
+            <a href="awesome-on-policy-distillation/opd-image-post-training/few-step-distillation.html">少步与一步生成 <span>02</span></a>
+            <a href="awesome-on-policy-distillation/opd-image-post-training/post-training-recipe.html">图像生成后训练配方 <span>03</span></a>
+            <a href="awesome-on-policy-distillation/opd-image-post-training/multi-task-alignment.html">多任务对齐与多教师整合 <span>04</span></a>
+            <a href="awesome-on-policy-distillation/opd-image-post-training/failure-diagnostics.html">失败模式与诊断 <span>05</span></a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="pages">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow"><span></span> All local HTML</div>
+          <h2>`awesome-on-policy-distillation` 下的全部 HTML。</h2>
+        </div>
+        <p>这里保留完整列表，方便从总入口直接跳到任意子页面。</p>
+      </div>
+      <div class="page-grid">
+        <article class="page-card">
+          <span class="label">TOP LEVEL</span>
+          <h3>OPD Visual Guide</h3>
+          <p>A compact visual guide to OPD, with a focus on image generation, diffusion, and flow models.</p>
+          <a class="button secondary" href="awesome-on-policy-distillation/opd-visual-guide.html">打开页面</a>
+        </article>
+        <article class="page-card">
+          <span class="label">TOP LEVEL</span>
+          <h3>OPD Study Guide</h3>
+          <p>详细学习网页，覆盖公式、核心论文、图像生成 OPD 和最新进展。</p>
+          <a class="button secondary" href="awesome-on-policy-distillation/opd-study-guide.html">打开页面</a>
+        </article>
+        <article class="page-card">
+          <span class="label">TOP LEVEL</span>
+          <h3>OPD Formula Derivation</h3>
+          <p>从基础概率和 KL 出发，推导 OPD、GKD、ExOPD 与 diffusion/flow OPD 公式。</p>
+          <a class="button secondary" href="awesome-on-policy-distillation/opd-formula-derivation.html">打开页面</a>
+        </article>
+        <article class="page-card">
+          <span class="label">IMAGE HUB</span>
+          <h3>OPD 图像生成后训练研究站</h3>
+          <p>专题入口，汇总 PWC 信息、论文地图、后训练配方和研究方向。</p>
+          <a class="button secondary" href="awesome-on-policy-distillation/opd-image-post-training/index.html">打开页面</a>
+        </article>
+        <article class="page-card">
+          <span class="label">IMAGE HUB</span>
+          <h3>从 Token 到图像轨迹</h3>
+          <p>解释 OPD 如何从 LLM token rollout 迁移到 diffusion / flow latent trajectory。</p>
+          <a class="button secondary" href="awesome-on-policy-distillation/opd-image-post-training/trajectory-opd.html">打开页面</a>
+        </article>
+        <article class="page-card">
+          <span class="label">IMAGE HUB</span>
+          <h3>少步与一步生成</h3>
+          <p>说明 OPD 为什么适合 few-step / one-step 图像生成后训练。</p>
+          <a class="button secondary" href="awesome-on-policy-distillation/opd-image-post-training/few-step-distillation.html">打开页面</a>
+        </article>
+        <article class="page-card">
+          <span class="label">IMAGE HUB</span>
+          <h3>图像生成后训练配方</h3>
+          <p>覆盖 rollout、teacher、loss、eval、停止条件等工程流程。</p>
+          <a class="button secondary" href="awesome-on-policy-distillation/opd-image-post-training/post-training-recipe.html">打开页面</a>
+        </article>
+        <article class="page-card">
+          <span class="label">IMAGE HUB</span>
+          <h3>多任务对齐与多教师整合</h3>
+          <p>研究 OPD 如何缓解多目标图像 RL 的 seesaw effect、reward hacking 和遗忘。</p>
+          <a class="button secondary" href="awesome-on-policy-distillation/opd-image-post-training/multi-task-alignment.html">打开页面</a>
+        </article>
+        <article class="page-card">
+          <span class="label">IMAGE HUB</span>
+          <h3>失败模式与诊断</h3>
+          <p>把 LLM OPD 的稳定性研究转译到图像生成 OPD 的诊断和修复动作。</p>
+          <a class="button secondary" href="awesome-on-policy-distillation/opd-image-post-training/failure-diagnostics.html">打开页面</a>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">OPD Learn local HTML index. Open this file directly to navigate the workspace.</footer>
+</body>
+</html>
