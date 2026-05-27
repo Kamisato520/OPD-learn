@@ -79,3 +79,4 @@ After deploying with GitHub Pages, open the site root:
 - The site is static and requires no build step.
 - Formula pages use the MathJax CDN.
 - `claude/DESIGN.md` is included as the design reference.
+
